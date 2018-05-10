@@ -2,6 +2,6 @@
 mlpy - Machine Learning Python
 ==============================
 
- * Homepage: mlpy.sourceforge.net
- * Documentation: mlpy.sourceforge.net\docs
- * Project page: sourceforge.net/projects/mlpy/
+ * Homepage: https://github.com/richardARPANET/mlpy
+ * Documentation: https://mlpy.sourceforge.net\docs
+ * Project page: https://sourceforge.net/projects/mlpy/

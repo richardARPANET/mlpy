@@ -2,7 +2,7 @@ Metadata-Version: 1.1
 Name: mlpy
 Version: 3.5.0
 Summary: mlpy - Machine Learning Py - High-Performance Python Package for Predictive Modeling
-Home-page: mlpy.sourceforge.net
+Home-page: https://github.com/richardARPANET/mlpy
 Author: Davide Albanese
 Author-email: davide.albanese@gmail.com
 License: GPLv3
