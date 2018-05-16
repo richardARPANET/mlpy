@@ -274,7 +274,7 @@ classifiers = [
 ]
 
 setup(name = 'machine-learning-py',
-      version='3.5.5',
+      version='3.5.6',
       requires=['numpy (>=1.3.0)', 'scipy (>=0.7.0)', 'gsl (>=1.11)'],
       description='mlpy - Machine Learning Py - ' \
          'High-Performance Python Package for Predictive Modeling',
