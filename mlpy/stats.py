@@ -16,20 +16,18 @@
 
 __all__ = ['bootstrap_ci', 'quantile']
 
+import sys
+
 import numpy as np
 
-import sys
-if sys.version >= '3':
-    from . import gsl
-else:
-    import gsl
+from . import gsl
 
 
 def bootstrap_ci(x, B=1000, alpha=0.05, seed=0):
     """Computes the (1-alpha) Bootstrap confidence interval
-    from empirical bootstrap distribution of sample mean. 
-        
-    The lower and upper confidence bounds are the (B*alpha/2)-th 
+    from empirical bootstrap distribution of sample mean.
+
+    The lower and upper confidence bounds are the (B*alpha/2)-th
     and B * (1-alpha/2)-th ordered means, respectively.
     For B = 1000 and alpha = 0.05 these are the 25th and 975th
     ordered means.
@@ -60,7 +58,7 @@ def bootstrap_ci(x, B=1000, alpha=0.05, seed=0):
 def quantile(x, f):
     """Returns a quantile value of `x`.
 
-    The quantile is determined by the `f`, a fraction between 
+    The quantile is determined by the `f`, a fraction between
     0 and 1. For example, to compute the value of the 75th
     percentile `f` should have the value 0.75.
     """

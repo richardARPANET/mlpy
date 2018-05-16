@@ -20,10 +20,8 @@ __all__ = [
 ]
 
 import sys
-if sys.version >= '3':
-    from . import kernel
-else:
-    import kernel
+
+from . import kernel
 
 
 class Kernel:

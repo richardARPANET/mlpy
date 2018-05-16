@@ -14,17 +14,16 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
+
 import numpy as np
 import scipy.linalg as spla
-from ridge import ridge_base
-from ols import ols_base
-from kernel_class import *
 
-import sys
-if sys.version >= '3':
-    from . import kernel
-else:
-    import kernel
+from kernel_class import *
+from ols import ols_base
+from ridge import ridge_base
+
+from . import kernel
 
 __all__ = ['LDA', 'SRDA', 'KFDA', 'PCA', 'PCAFast', 'KPCA']
 
@@ -51,14 +50,14 @@ def gso(v, norm=False):
 
 def lda(xarr, yarr):
     """Linear Discriminant Analysis.
-    
+
     Returns the transformation matrix `coeff` (P, C-1),
     where `x` is a matrix (N,P) and C is the number of
-    classes. Each column of `x` represents a variable, 
-    while the rows contain observations. Each column of 
+    classes. Each column of `x` represents a variable,
+    while the rows contain observations. Each column of
     `coeff` contains coefficients for one transformation
     vector.
-    
+
     Sample(s) can be embedded into the C-1 dimensional space
     by z = x coeff (z = np.dot(x, coeff)).
 
@@ -67,7 +66,7 @@ def lda(xarr, yarr):
           data matrix
        y : 1d array_like object integer (N)
           class labels
-    
+
     :Returns:
        coeff: 2d numpy array (P, P)
           transformation matrix.
@@ -95,11 +94,11 @@ def lda(xarr, yarr):
 def srda(xarr, yarr, alpha):
     """Spectral Regression Discriminant Analysis.
 
-    Returns the (P, C-1) transformation matrix, where 
+    Returns the (P, C-1) transformation matrix, where
     `x` is a matrix (N,P) and C is the number of classes.
-    Each column of `x` represents a variable, while the 
-    rows contain observations. `x` must be centered 
-    (subtracting the empirical mean vector from each column 
+    Each column of `x` represents a variable, while the
+    rows contain observations. `x` must be centered
+    (subtracting the empirical mean vector from each column
     of`x`).
 
     Sample(s) can be embedded into the C-1 dimensional space
@@ -137,14 +136,14 @@ def srda(xarr, yarr, alpha):
 
 def pca(xarr, method='svd'):
     """Principal Component Analysis.
-    
-    Returns the principal component coefficients `coeff`(K,K) 
-    and the corresponding eigenvalues (K) of the covariance 
-    matrix of `x` (N,P) sorted by decreasing eigenvalue, where 
-    K=min(N,P). Each column of `x` represents a variable,  
-    while the rows contain observations. Each column of `coeff` 
+
+    Returns the principal component coefficients `coeff`(K,K)
+    and the corresponding eigenvalues (K) of the covariance
+    matrix of `x` (N,P) sorted by decreasing eigenvalue, where
+    K=min(N,P). Each column of `x` represents a variable,
+    while the rows contain observations. Each column of `coeff`
     contains coefficients for one principal component.
-    
+
     Sample(s) can be embedded into the M (<=K) dimensional
     space by z = x coeff_M (z = np.dot(x, coeff[:, :M])).
 
@@ -153,11 +152,11 @@ def pca(xarr, method='svd'):
           data matrix
        method : str
           'svd' or 'cov'
-    
+
     :Returns:
        coeff, evals : 2d numpy array (K, K), 1d numpy array (K)
           principal component coefficients (eigenvectors of
-          the covariance matrix of x) and eigenvalues sorted by 
+          the covariance matrix of x) and eigenvalues sorted by
           decreasing eigenvalue.
     """
 
@@ -186,23 +185,23 @@ def pca(xarr, method='svd'):
 def pca_fast(xarr, m, eps):
     """Fast principal component analysis using the fixed-point
     algorithm.
-    
+
     Returns the first `m` principal component coefficients
-    `coeff` (P, M). Each column of `x` represents a variable,  
-    while the rows contain observations. Each column of `coeff` 
+    `coeff` (P, M). Each column of `x` represents a variable,
+    while the rows contain observations. Each column of `coeff`
     contains coefficients for one principal component.
 
-    Sample(s) can be embedded into the m (<=P) dimensional space 
+    Sample(s) can be embedded into the m (<=P) dimensional space
     by z = x coeff (z = np.dot(X,  coeff)).
 
     :Parameters:
        x : 2d numpy array (N, P)
           data matrix
-       m : integer (0 < m <= P) 
+       m : integer (0 < m <= P)
           the number of principal axes or eigenvectors required
        eps : float (> 0)
           tolerance error
-    
+
     :Returns:
        coeff : 2d numpy array (P, H)
           principal component coefficients
@@ -236,12 +235,12 @@ def pca_fast(xarr, m, eps):
 
 def lda_fast(xarr, yarr):
     """Fast implementation of Linear Discriminant Analysis.
-    
-    Returns the (P, C-1) transformation matrix, where 
+
+    Returns the (P, C-1) transformation matrix, where
     `x` is a centered matrix (N,P) and C is the number of classes.
-    Each column of `x` represents a variable, while the 
-    rows contain observations. `x` must be centered 
-    (subtracting the empirical mean vector from each column 
+    Each column of `x` represents a variable, while the
+    rows contain observations. `x` must be centered
+    (subtracting the empirical mean vector from each column
     of`x`).
 
     :Parameters:
@@ -249,7 +248,7 @@ def lda_fast(xarr, yarr):
           training data (N, P)
        y : 1d array_like object integer
           target values (N)
-    
+
     :Returns:
        A : 2d numpy array (P, C-1)
           tranformation matrix
@@ -271,23 +270,23 @@ def lda_fast(xarr, yarr):
 
 
 def kpca(K):
-    """Kernel Principal Component Analysis, PCA in 
+    """Kernel Principal Component Analysis, PCA in
     a kernel-defined feature space making use of the
     dual representation.
-    
-    Returns the kernel principal component coefficients 
+
+    Returns the kernel principal component coefficients
     `coeff` (N, N) computed as :math:`\lambda^{-1/2} \mathbf{v}_j`
     where :math:`\lambda` and :math:`\mathbf{v}` are the ordered
-    eigenvalues and the corresponding eigenvector of the centered 
+    eigenvalues and the corresponding eigenvector of the centered
     kernel matrix K.
-    
+
     Sample(s) can be embedded into the G (<=N) dimensional space
     by z = K coeff_G (z = np.dot(K, coeff[:, :G])).
 
     :Parameters:
        K: 2d array_like object (N,N)
           precomputed centered kernel matrix
-        
+
     :Returns:
        coeff, evals: 2d numpy array (N,N), 1d numpy array (N)
           kernel principal component coefficients, eigenvalues
@@ -308,12 +307,12 @@ def kpca(K):
 
 def kfda(Karr, yarr, lmb=0.001):
     """Kernel Fisher Discriminant Analysis.
-    
+
     Returns the transformation matrix `coeff` (N,1),
     where `K` is a the kernel matrix (N,N) and y
     is the class labels (the alghoritm works only with 2
     classes).
-   
+
     :Parameters:
        K: 2d array_like object (N, N)
           precomputed kernel matrix
@@ -356,7 +355,7 @@ class LDA:
 
     def __init__(self, method='cov'):
         """Initialization.
-        
+
         :Parameters:
            method : str
               'cov' or 'fast'
@@ -373,7 +372,7 @@ class LDA:
     def learn(self, x, y):
         """Computes the transformation matrix.
         `x` is a matrix (N,P) and `y` is a vector containing
-        the class labels. Each column of `x` represents a 
+        the class labels. Each column of `x` represents a
         variable, while the rows contain observations.
         """
 
@@ -412,7 +411,7 @@ class LDA:
 
     def coeff(self):
         """Returns the tranformation matrix (P,C-1), where
-        C is the number of classes. Each column contains 
+        C is the number of classes. Each column contains
         coefficients for one transformation vector.
         """
 
@@ -438,7 +437,7 @@ class SRDA:
     def learn(self, x, y):
         """Computes the transformation matrix.
         `x` is a matrix (N,P) and `y` is a vector containing
-        the class labels. Each column of `x` represents a 
+        the class labels. Each column of `x` represents a
         variable, while the rows contain observations.
         """
 
@@ -474,7 +473,7 @@ class SRDA:
 
     def coeff(self):
         """Returns the tranformation matrix (P,C-1), where
-        C is the number of classes. Each column contains 
+        C is the number of classes. Each column contains
         coefficients for one transformation vector.
         """
 
@@ -487,14 +486,14 @@ class KFDA:
 
     def __init__(self, lmb=0.001, kernel=None):
         """Initialization.
-        
+
         :Parameters:
            lmb : float (>= 0.0)
               regularization parameter
            kernel : None or mlpy.Kernel object.
               if kernel is None, K and Kt in .learn()
-              and in .transform() methods must be precomputed kernel 
-              matricies, else K and Kt must be training (resp. 
+              and in .transform() methods must be precomputed kernel
+              matricies, else K and Kt must be training (resp.
               test) data in input space.
         """
 
@@ -538,7 +537,7 @@ class KFDA:
 
     def transform(self, Kt):
         """Embed Kt into the 1d kernel fisher space.
-        
+
         :Parameters:
            Kt : 1d or 2d array_like object
               precomputed test kernel matrix. (if kernel=None);
@@ -570,7 +569,7 @@ class PCA:
 
     def __init__(self, method='svd', whiten=False):
         """Initialization.
-        
+
         :Parameters:
            method : str
               method, 'svd' or 'cov'
@@ -588,7 +587,7 @@ class PCA:
 
     def learn(self, x):
         """Compute the principal component coefficients.
-        `x` is a matrix (N,P). Each column of `x` represents a 
+        `x` is a matrix (N,P). Each column of `x` represents a
         variable, while the rows contain observations.
         """
 
@@ -614,7 +613,7 @@ class PCA:
 
     def transform(self, t, k=None):
         """Embed `t` (M,P) into the k dimensional subspace.
-        Returns a (M,K) matrix. If `k` =None will be set to 
+        Returns a (M,K) matrix. If `k` =None will be set to
         min(N,P)
         """
 
@@ -651,7 +650,7 @@ class PCA:
     def coeff(self):
         """Returns the tranformation matrix (P,L), where
         L=min(N,P), sorted by decreasing eigenvalue.
-        Each column contains coefficients for one principal 
+        Each column contains coefficients for one principal
         component.
         """
 
@@ -677,7 +676,7 @@ class PCAFast:
 
     def __init__(self, k=2, eps=0.01):
         """Initialization.
-        
+
         :Parameters:
            k : integer
               the number of principal axes or eigenvectors required
@@ -693,7 +692,7 @@ class PCAFast:
 
     def learn(self, x):
         """Compute the firsts `k` principal component coefficients.
-        `x` is a matrix (N,P). Each column of `x` represents a 
+        `x` is a matrix (N,P). Each column of `x` represents a
         variable, while the rows contain observations.
         """
 
@@ -732,9 +731,9 @@ class PCAFast:
         return np.dot(zarr, self._coeff_inv) + self._mean
 
     def coeff(self):
-        """Returns the tranformation matrix (P,K) sorted by 
+        """Returns the tranformation matrix (P,K) sorted by
         decreasing eigenvalue.
-        Each column contains coefficients for one principal 
+        Each column contains coefficients for one principal
         component.
         """
 
@@ -754,12 +753,12 @@ class KPCA:
 
     def __init__(self, kernel=None):
         """Initialization.
-        
+
         :Parameters:
            kernel : None or mlpy.Kernel object.
               if kernel is None, K and Kt in .learn()
-              and in .transform() methods must be precomputed kernel 
-              matricies, else K and Kt must be training (resp. 
+              and in .transform() methods must be precomputed kernel
+              matricies, else K and Kt must be training (resp.
               test) data in input space.
         """
 
@@ -799,7 +798,7 @@ class KPCA:
 
     def transform(self, Kt, k=None):
         """Embed Kt into the `k` dimensional subspace.
-        
+
         :Parameters:
            Kt : 1d or 2d array_like object
               precomputed test kernel matrix. (if kernel=None);
@@ -828,7 +827,7 @@ class KPCA:
             raise ValueError("Kt, coeff: shape mismatch")
 
     def coeff(self):
-        """Returns the tranformation matrix (N,N) sorted by 
+        """Returns the tranformation matrix (N,N) sorted by
         decreasing eigenvalue.
         """
 

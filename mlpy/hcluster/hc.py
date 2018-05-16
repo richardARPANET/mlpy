@@ -16,9 +16,10 @@
 
 __all__ = ['HCluster']
 
+import sys
+
 import numpy as np
 
-import sys
 from . import chc
 
 

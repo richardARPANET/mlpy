@@ -19,6 +19,7 @@
 __all__ = ["ridge_base", "Ridge", "KernelRidge"]
 
 import numpy as np
+
 from kernel_class import *
 
 

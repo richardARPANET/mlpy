@@ -17,8 +17,9 @@
 __all__ = ['rfe_kfda', 'rfe_w2']
 
 import numpy as np
-from kernel_class import *
+
 from da import KFDAC
+from kernel_class import *
 
 
 # used in rfe_kfda

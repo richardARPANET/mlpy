@@ -18,6 +18,7 @@ __all__ = ['MFastHCluster']
 
 import numpy as np
 import scipy.cluster.hierarchy as hierarchy
+
 import fastcluster
 
 
@@ -53,7 +54,7 @@ class MFastHCluster:
         )
 
     def Z(self):
-        """Returns the hierarchical clustering encoded as a 
+        """Returns the hierarchical clustering encoded as a
         linkage matrix. See `scipy.cluster.hierarchy.linkage`.
         """
 
@@ -62,11 +63,11 @@ class MFastHCluster:
     def cut(self, t):
         """Cuts the tree into several groups by specifying the cut
         height.
-        
+
         :Parameters:
           t : float
             the threshold to apply when forming flat clusters
-         
+
         :Returns:
           clust : 1d numpy array
             group memberships. Groups are in 0, ..., N-1.
