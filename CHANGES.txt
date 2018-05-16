@@ -9,7 +9,7 @@ New features:
 
 Fix:
  * wavelet submodule: cwt(): it returned only real values in morlet and poul
-3.5.0 (2018-05-10)
+3.5.0 (2018-05-16)
  * fix rfe_kfda and rfe_w2 when p=1
 
 Version 3.4.0
