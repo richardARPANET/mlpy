@@ -10,7 +10,7 @@ New features:
 Fix:
  * wavelet submodule: cwt(): it returned only real values in morlet and poul
 <<<<<<< HEAD
-3.5.4 (2018-05-16)
+3.5.5 (2018-05-16)
 ==================
 3.5.1 (unreleased)
 >>>>>>> a313c9f40c242c3a26fac5aa7786fb2ed4c68f1c
