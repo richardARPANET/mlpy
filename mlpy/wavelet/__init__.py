@@ -2,12 +2,8 @@
 """
 
 import sys
-if sys.version >= '3':
-    from ._dwt import *
-    from ._uwt import *
-else:
-    from _dwt import *
-    from _uwt import *
+from ._dwt import *
+from ._uwt import *
 
 from continuous import *
 import continuous

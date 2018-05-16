@@ -16,13 +16,11 @@
 
 __all__ = ['borda_count']
 
+import sys
+
 import numpy as np
 
-import sys
-if sys.version >= '3':
-    from . import cborda
-else:
-    import cborda
+from . import cborda
 
 
 def borda_count(x, k=None):
@@ -31,20 +29,20 @@ def borda_count(x, k=None):
     Sort the element ids with decreasing number of extractions, and
     element ids with equal number of extractions will be sorted with
     increasing mean positions.
-    
+
     :Parameters:
        x : 2d array_like object integer (N, P)
           ranked ids lists. For each list ids must be unique
           in [0, P-1].
        k : None or integer
           compute borda on top-k position (None -> k = P)
-          
+
     :Returns:
        borda : 1d numpy array objects
           sorted-ids, number of extractions, mean positions
 
     Example:
-    
+
     >>> import numpy as np
     >>> import mlpy
     >>> x = [[2,4,1,3,0], # first ranked list

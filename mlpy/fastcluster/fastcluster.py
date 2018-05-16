@@ -25,15 +25,14 @@ __all__ = [
 __version_info__ = ('1', '1', '2')
 __version__ = '.'.join(__version_info__)
 
-from numpy import double, empty, array, ndarray, var, cov, dot, bool, expand_dims, ceil, sqrt
+import sys
+
+from numpy import (array, bool, ceil, cov, dot, double, empty, expand_dims,
+                   ndarray, sqrt, var)
 from numpy.linalg import inv
 from scipy.spatial.distance import pdist
 
-import sys
-if sys.version >= '3':
-    from ._fastcluster import linkage_wrap, linkage_vector_wrap
-else:
-    from _fastcluster import linkage_wrap, linkage_vector_wrap
+from ._fastcluster import linkage_vector_wrap, linkage_wrap
 
 
 def single(D):
