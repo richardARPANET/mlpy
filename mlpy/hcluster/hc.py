@@ -20,10 +20,7 @@ __all__ = ['HCluster']
 import numpy as np
 
 import sys
-if sys.version >= '3':
-    from . import chc
-else:
-    import chc
+from . import chc
 
 
 class HCluster:
@@ -47,9 +44,9 @@ class HCluster:
           method : string ('ward', 'single', 'complete', 'average', 'mcquitty', 'median', 'centroid')
             the agglomeration method to be used
         """
-        
+
         self.method = self.METHODS[method]
-        
+
         self._ia = None
         self._ib = None
         self._order = None
@@ -63,9 +60,9 @@ class HCluster:
 
         :Parameters:
           y : 1d array_like object
-            condensed distance matrix y. y must be a C(n, 2) sized 
-            vector where n is the number of original observations 
-            paired in the distance matrix. 
+            condensed distance matrix y. y must be a C(n, 2) sized
+            vector where n is the number of original observations
+            paired in the distance matrix.
         """
 
         y_a = np.asarray(y)
@@ -81,17 +78,17 @@ class HCluster:
 
         self._ia, self._ib, self._order, self._height = \
             chc.linkage(n, y, self.method)
-        
+
         self._linkage = True
 
     def cut(self, t):
         """Cuts the tree into several groups by specifying the cut
         height.
-        
+
         :Parameters:
           t : float
             the threshold to apply when forming flat clusters
-         
+
         :Returns:
           clust : 1d numpy array
             group memberships. Groups are in 0, ..., N-1.

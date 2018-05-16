@@ -1,5 +1,5 @@
-from version import v as __version__
 import sys
+from .version import v as __version__
 
 # extension modules
 if sys.version >= '3':
@@ -28,25 +28,25 @@ else:
     from lcs import *
 
 # python modules
-from crossval import *
-from hcluster import *
-from metrics import *
-from perceptron import *
-from da import *
-from ols import *
-from ridge import *
-from bordacount import *
-from lars import *
-from elasticnet import *
-from dimred import *
-from irelief import *
-from parzen import *
-from stats import *
-from fastcluster import *
-from kernel_class import *
-from rfe import *
-from golub import *
-from pls import *
+from .crossval import *
+from .hcluster import *
+from .metrics import *
+from .perceptron import *
+from .da import *
+from .ols import *
+from .ridge import *
+from .bordacount import *
+from .lars import *
+from .elasticnet import *
+from .dimred import *
+from .irelief import *
+from .parzen import *
+from .stats import *
+from .fastcluster import *
+from .kernel_class import *
+from .rfe import *
+from .golub import *
+from .pls import *
 
 import crossval
 import hcluster
@@ -97,12 +97,12 @@ __all__ += ['LibLinear']
 __all__ += ['LibSvm']
 __all__ += ['findpeaks_dist', 'findpeaks_win']
 __all__ += ['kmeans']
-__all__ += ['kernel_linear', 'kernel_gaussian', 
-            'kernel_polynomial', 'kernel_exponential', 
+__all__ += ['kernel_linear', 'kernel_gaussian',
+            'kernel_polynomial', 'kernel_exponential',
             'kernel_sigmoid', 'kernel_center']
 __all__ += ['KernelAdatron']
 __all__ += ['canberra', 'canberra_location', 'canberra_stability',
-            'canberra_location_expected', 'canberra_location_max', 
+            'canberra_location_expected', 'canberra_location_max',
             'canberra_stability_max']
 __all__ += ['KNN', 'ClassTree', 'MaximumLikelihoodC']
 __all__ += ['dtw_std', 'dtw_subsequence']
