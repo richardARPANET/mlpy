@@ -19,7 +19,7 @@ __all__ = ['MFastHCluster']
 import numpy as np
 import scipy.cluster.hierarchy as hierarchy
 
-import fastcluster
+from . import fastcluster
 
 
 class MFastHCluster:

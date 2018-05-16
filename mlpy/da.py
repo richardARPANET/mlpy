@@ -16,7 +16,7 @@
 
 import numpy as np
 
-from kernel_class import *
+from .kernel_class import *
 
 __all__ = ['LDAC', 'DLDA', 'KFDAC']
 
@@ -87,9 +87,9 @@ class LDAC:
 
     def w(self):
         """Returns the coefficients.
-        For multiclass classification this method returns a 2d 
+        For multiclass classification this method returns a 2d
         numpy array where w[i] contains the coefficients of label i.
-        For binary classification an 1d numpy array (w_1 - w_0) 
+        For binary classification an 1d numpy array (w_1 - w_0)
         is returned.
         """
 
@@ -103,8 +103,8 @@ class LDAC:
 
     def bias(self):
         """Returns the bias.
-        For multiclass classification this method returns a 1d 
-        numpy array where b[i] contains the coefficients of label i. 
+        For multiclass classification this method returns a 1d
+        numpy array where b[i] contains the coefficients of label i.
         For binary classification an float (b_1 - b_0) is returned.
         """
 
@@ -118,12 +118,12 @@ class LDAC:
 
     def pred(self, t):
         """Does classification on test vector(s) `t`.
-      
+
         :Parameters:
             t : 1d (one sample) or 2d array_like object
                 test data ([M,] P)
-            
-        :Returns:        
+
+        :Returns:
             p : integer or 1d numpy array
                 predicted class(es)
         """
@@ -155,7 +155,7 @@ class DLDA:
 
     def __init__(self, delta):
         """Initialization.
-        
+
         :Parameters:
            delta : float
               regularization parameter
@@ -223,7 +223,7 @@ class DLDA:
         return self._labels
 
     def sel(self):
-        """Returns the most important features (the features that 
+        """Returns the most important features (the features that
         have a nonzero dprime for at least one of the classes).
         """
 
@@ -252,12 +252,12 @@ class DLDA:
 
     def pred(self, t):
         """Does classification on test vector(s) t.
-      
+
         :Parameters:
            t : 1d (one sample) or 2d array_like object
               test data ([M,] P)
-            
-        :Returns:        
+
+        :Returns:
            p : int or 1d numpy array
               the predicted class(es) for t is returned.
         """
@@ -312,8 +312,8 @@ class KFDAC:
               regularization parameter
            kernel : None or mlpy.Kernel object.
               if kernel is None, K and Kt in .learn()
-              and in .transform() methods must be precomputed kernel 
-              matricies, else K and Kt must be training (resp. 
+              and in .transform() methods must be precomputed kernel
+              matricies, else K and Kt must be training (resp.
               test) data in input space.
         """
 
@@ -392,13 +392,13 @@ class KFDAC:
 
     def pred(self, Kt):
         """Compute the predicted response.
-      
+
         :Parameters:
            Kt : 1d or 2d array_like object
               precomputed test kernel matrix. (if kernel=None);
               test data in input space (if kernel is a Kernel object).
-            
-        :Returns:        
+
+        :Returns:
             p : integer or 1d numpy array
                 the predicted class(es)
         """

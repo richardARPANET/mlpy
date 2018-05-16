@@ -20,14 +20,14 @@ __all__ = ["ridge_base", "Ridge", "KernelRidge"]
 
 import numpy as np
 
-from kernel_class import *
+from .kernel_class import *
 
 
 def ridge_base(x, y, lmb):
     """Solves the equation X beta = y by computing a vector beta that
     minimize ||y - X beta||^2 + ||lambda beta||^2 where ||.|| is the L^2
-    norm (X is a NxP matrix). When if N >= P the function solves 
-    the normal equation (primal solution), when N < P the function 
+    norm (X is a NxP matrix). When if N >= P the function solves
+    the normal equation (primal solution), when N < P the function
     solves the dual solution.
 
     X must be centered by columns.
@@ -77,12 +77,12 @@ def ridge_base(x, y, lmb):
 
 class Ridge:
     """Ridge Regression.
-    
+
     Solves the equation X beta = y by computing a vector beta that
     minimize ||y - X beta||^2 + ||lambda beta||^2 where ||.|| is the L^2
-    norm (X is a NxP matrix). When if N >= P the function solves 
-    the normal equation (primal solution), when N < P the function 
-    solves the dual solution. 
+    norm (X is a NxP matrix). When if N >= P the function solves
+    the normal equation (primal solution), when N < P the function
+    solves the dual solution.
     """
 
     def __init__(self, lmb=1.0):
@@ -181,8 +181,8 @@ class KernelRidge:
               regularization parameter
            kernel : None or mlpy.Kernel object.
               if kernel is None, K and Kt in .learn()
-              and in .pred() methods must be precomputed kernel 
-              matricies, else K and Kt must be training (resp. 
+              and in .pred() methods must be precomputed kernel
+              matricies, else K and Kt must be training (resp.
               test) data in input space.
         """
 

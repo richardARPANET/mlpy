@@ -35,28 +35,28 @@ from .rfe import *
 from .golub import *
 from .pls import *
 
-import crossval
-import hcluster
-import metrics
-import perceptron
-import da
-import ols
-import ridge
-import bordacount
-import lars
-import elasticnet
-import dimred
-import irelief
-import parzen
-import stats
-import fastcluster
-import kernel_class
-import rfe
-import golub
-import pls
+from . import crossval
+from . import hcluster
+from . import metrics
+from . import perceptron
+from . import da
+from . import ols
+from . import ridge
+from . import bordacount
+from . import lars
+from . import elasticnet
+from . import dimred
+from . import irelief
+from . import parzen
+from . import stats
+from . import fastcluster
+from . import kernel_class
+from . import rfe
+from . import golub
+from . import pls
 
 # visible submodules
-import wavelet
+from . import wavelet
 
 __all__ = []
 __all__ += crossval.__all__
