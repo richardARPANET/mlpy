@@ -1,6 +1,7 @@
-from distutils.core import setup, Extension
-from distutils.sysconfig import *
-from distutils.util import *
+from distutils.core import Extension
+from distutils.sysconfig import get_python_inc
+from distutils.util import get_platform
+from setuptools import setup
 import os
 import os.path
 import numpy
