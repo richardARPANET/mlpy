@@ -4,8 +4,14 @@ from distutils.util import get_platform
 from setuptools import setup, Extension
 import os
 import os.path
-import numpy
+import subprocess
 
+setup_requires = ['numpy']
+FNULL = open(os.devnull, 'w')
+subprocess.check_call(
+    ['pip', 'install', *setup_requires], stdout=FNULL, stderr=subprocess.STDOUT
+)
+import numpy
 try:
     from distutils.command.build_py import build_py_2to3 \
         as build_py
