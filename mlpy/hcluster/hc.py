@@ -16,7 +16,6 @@
 
 __all__ = ['HCluster']
 
-
 import numpy as np
 
 import sys
@@ -35,9 +34,9 @@ class HCluster:
         'mcquitty': 5,
         'median': 6,
         'centroid': 7
-        }
+    }
 
-    def __init__ (self, method='complete'):
+    def __init__(self, method='complete'):
         """Initialization.
 
         :Parameters:
@@ -73,7 +72,7 @@ class HCluster:
 
         n = int(np.ceil(np.sqrt(l * 2)))
 
-        if (n*(n-1)/2) != l:
+        if (n * (n - 1) / 2) != l:
             raise ValueError("invalid condensed distance matrix y")
 
         self._ia, self._ib, self._order, self._height = \

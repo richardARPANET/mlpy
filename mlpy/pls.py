@@ -59,18 +59,18 @@ class PLS:
 
         if yarr.ndim > 2:
             raise ValueError("y must be an 1d array_like object")
-    
+
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y shape mismatch")
 
         if yarr.ndim == 1:
             yarr = yarr.reshape(-1, 1)
-        
-        self._xmean =  np.mean(xarr, axis=0)
-        self._beta0 =  np.mean(yarr, axis=0)
+
+        self._xmean = np.mean(xarr, axis=0)
+        self._beta0 = np.mean(yarr, axis=0)
         xarr = xarr - self._xmean
         yarr = yarr - self._beta0
-        
+
         u = np.empty((xarr.shape[1], self._iters), dtype=np.float)
         c = np.empty((yarr.shape[1], self._iters), dtype=np.float)
         p = np.empty((xarr.shape[1], self._iters), dtype=np.float)
@@ -84,15 +84,15 @@ class PLS:
                     uold = u[:, i]
                     tu = np.dot(np.dot(YX.T, YX), u[:, i])
                     u[:, i] = tu / np.linalg.norm(tu)
-            
+
             t = np.dot(xarr, u[:, i].reshape(-1, 1))
             tt = np.dot(t.T, t)
             c[:, i] = np.ravel(np.dot(yarr.T, t) / tt)
             p[:, i] = np.ravel(np.dot(xarr.T, t) / tt)
-            xarr = xarr - np.dot(t, p[:, i].reshape(1, -1))         
-            
+            xarr = xarr - np.dot(t, p[:, i].reshape(1, -1))
+
         self._beta = np.dot(u, np.linalg.solve(np.dot(p.T, u), c.T))
-        
+
         if yarr.shape[1] == 1:
             self._beta = np.ravel(self._beta)
 
@@ -112,17 +112,17 @@ class PLS:
             raise ValueError("no model computed; run learn()")
 
         tarr = np.asarray(t, dtype=np.float)
-        
+
         if tarr.ndim > 2 or tarr.ndim < 1:
             raise ValueError("t must be an 1d or a 2d array_like object")
-        
+
         try:
             p = np.dot(tarr - self._xmean, self._beta) + self._beta0
         except ValueError:
             raise ValueError("t, beta: shape mismatch")
 
         return p
-    
+
     def beta(self):
         """Returns the regression coefficients. 
         

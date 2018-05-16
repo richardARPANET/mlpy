@@ -40,11 +40,11 @@ def gso(v, norm=False):
     """Gram-Schmidt orthogonalization.
     Vectors v_1, ..., v_k are stored by rows.
     """
-    
+
     for j in range(v.shape[0]):
         for i in range(j):
             v[j] = v[j] - proj(v[i], v[j])
-        
+
         if norm:
             v[j] /= np.linalg.norm(v[j])
 
@@ -75,21 +75,20 @@ def lda(xarr, yarr):
 
     n, p = xarr.shape[0], xarr.shape[1]
     labels = np.unique(yarr)
-    
-    sw = np.zeros((p, p), dtype=np.float)   
+
+    sw = np.zeros((p, p), dtype=np.float)
     for i in labels:
-        idx = np.where(yarr==i)[0]
+        idx = np.where(yarr == i)[0]
         sw += np.cov(xarr[idx], rowvar=0) * \
             (idx.shape[0] - 1)
     st = np.cov(xarr, rowvar=0) * (n - 1)
 
     sb = st - sw
-    evals, evecs = spla.eig(sb, sw, overwrite_a=True,
-                            overwrite_b=True)
+    evals, evecs = spla.eig(sb, sw, overwrite_a=True, overwrite_b=True)
     idx = np.argsort(evals)[::-1]
     evecs = evecs[:, idx]
-    evecs = evecs[:, :labels.shape[0]-1]
-    
+    evecs = evecs[:, :labels.shape[0] - 1]
+
     return evecs
 
 
@@ -121,13 +120,13 @@ def srda(xarr, yarr, alpha):
 
     # Point 1 in section 4.2
     yu = np.unique(yarr)
-    yk = np.zeros((yu.shape[0]+1, yarr.shape[0]), dtype=np.float)
+    yk = np.zeros((yu.shape[0] + 1, yarr.shape[0]), dtype=np.float)
     yk[0] = 1.
     for i in range(1, yk.shape[0]):
-        yk[i][yarr==yu[i-1]] = 1.
-    gso(yk, norm=False) # orthogonalize yk
+        yk[i][yarr == yu[i - 1]] = 1.
+    gso(yk, norm=False)  # orthogonalize yk
     yk = yk[1:-1]
-    
+
     # Point 2 in section 4.2
     ak = np.empty((yk.shape[0], xarr.shape[1]), dtype=np.float)
     for i in range(yk.shape[0]):
@@ -162,14 +161,13 @@ def pca(xarr, method='svd'):
           decreasing eigenvalue.
     """
 
-
     n, p = xarr.shape
-    
+
     if method == 'svd':
         x_h = (xarr - np.mean(xarr, axis=0)) / np.sqrt(n - 1)
         u, s, v = np.linalg.svd(x_h.T, full_matrices=False)
         evecs = u
-        evals = s**2
+        evals = s ** 2
     elif method == 'cov':
         k = np.min((n, p))
         C = np.cov(xarr, rowvar=0)
@@ -183,7 +181,7 @@ def pca(xarr, method='svd'):
         raise ValueError("method must be 'svd' or 'cov'")
 
     return evecs, evals
-        
+
 
 def pca_fast(xarr, m, eps):
     """Fast principal component analysis using the fixed-point
@@ -209,32 +207,32 @@ def pca_fast(xarr, m, eps):
        coeff : 2d numpy array (P, H)
           principal component coefficients
     """
-    
+
     m = int(m)
 
     np.random.seed(0)
     evecs = np.random.rand(m, xarr.shape[1])
 
-    C = np.cov(xarr, rowvar=0)    
+    C = np.cov(xarr, rowvar=0)
     for i in range(0, m):
         while True:
             evecs_old = np.copy(evecs[i])
             evecs[i] = np.dot(C, evecs[i])
-            
+
             # Gram-Schmidt orthogonalization
             a = np.dot(evecs[i], evecs[:i].T).reshape(-1, 1)
-            b = a  * evecs[:i]
-            evecs[i] -= np.sum(b, axis=0) # if i=0 sum is 0
-            
+            b = a * evecs[:i]
+            evecs[i] -= np.sum(b, axis=0)  # if i=0 sum is 0
+
             # Normalization
             evecs[i] = evecs[i] / np.linalg.norm(evecs[i])
-            
+
             # convergence criteria
             if np.abs(np.dot(evecs[i], evecs_old) - 1) < eps:
                 break
 
     return evecs.T
-      
+
 
 def lda_fast(xarr, yarr):
     """Fast implementation of Linear Discriminant Analysis.
@@ -258,13 +256,13 @@ def lda_fast(xarr, yarr):
     """
 
     yu = np.unique(yarr)
-    yk = np.zeros((yu.shape[0]+1, yarr.shape[0]), dtype=np.float)
+    yk = np.zeros((yu.shape[0] + 1, yarr.shape[0]), dtype=np.float)
     yk[0] = 1.
     for i in range(1, yk.shape[0]):
-        yk[i][yarr==yu[i-1]] = 1.
-    gso(yk, norm=False) # orthogonalize yk
+        yk[i][yarr == yu[i - 1]] = 1.
+    gso(yk, norm=False)  # orthogonalize yk
     yk = yk[1:-1]
-    
+
     ak = np.empty((yk.shape[0], xarr.shape[1]), dtype=np.float)
     for i in range(yk.shape[0]):
         ak[i], _ = ols_base(xarr, yk[i], -1)
@@ -295,16 +293,16 @@ def kpca(K):
           kernel principal component coefficients, eigenvalues
           sorted by decreasing eigenvalue.
     """
-    
+
     evals, evecs = np.linalg.eigh(K)
     idx = np.argsort(evals)
     idx = idx[::-1]
     evecs = evecs[:, idx]
     evals = evals[idx]
-    
+
     for i in range(len(evals)):
         evecs[:, i] /= np.sqrt(evals[i])
-   
+
     return evecs, evals
 
 
@@ -327,18 +325,18 @@ def kfda(Karr, yarr, lmb=0.001):
     :Returns:
        coeff: 2d numpy array (N,1)
           kernel fisher coefficients.
-    """  
+    """
 
     labels = np.unique(yarr)
     n = yarr.shape[0]
 
-    idx1 = np.where(yarr==labels[0])[0]
-    idx2 = np.where(yarr==labels[1])[0]
+    idx1 = np.where(yarr == labels[0])[0]
+    idx2 = np.where(yarr == labels[1])[0]
     n1 = idx1.shape[0]
     n2 = idx2.shape[0]
-    
+
     K1, K2 = Karr[:, idx1], Karr[:, idx2]
-    
+
     N1 = np.dot(np.dot(K1, np.eye(n1) - (1 / float(n1))), K1.T)
     N2 = np.dot(np.dot(K2, np.eye(n2) - (1 / float(n2))), K2.T)
     N = N1 + N2 + np.diag(np.repeat(lmb, n))
@@ -346,16 +344,16 @@ def kfda(Karr, yarr, lmb=0.001):
     M1 = np.sum(K1, axis=1) / float(n1)
     M2 = np.sum(K2, axis=1) / float(n2)
     M = M1 - M2
-    
+
     coeff = np.linalg.solve(N, M).reshape(-1, 1)
-            
+
     return coeff
- 
+
 
 class LDA:
     """Linear Discriminant Analysis.
     """
-    
+
     def __init__(self, method='cov'):
         """Initialization.
         
@@ -363,7 +361,7 @@ class LDA:
            method : str
               'cov' or 'fast'
         """
-        
+
         self._coeff = None
         self._mean = None
 
@@ -381,22 +379,22 @@ class LDA:
 
         xarr = np.asarray(x, dtype=np.float)
         yarr = np.asarray(y, dtype=np.int)
-        
+
         if xarr.ndim != 2:
             raise ValueError("x must be a 2d array_like object")
-        
+
         if yarr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y shape mismatch")
-        
+
         self._mean = np.mean(xarr, axis=0)
-        
+
         if self._method == 'cov':
             self._coeff = lda(xarr, yarr)
         elif self._method == 'fast':
-            self._coeff = lda_fast(xarr-self._mean, yarr)
+            self._coeff = lda_fast(xarr - self._mean, yarr)
 
     def transform(self, t):
         """Embed `t` (M,P) into the C-1 dimensional space.
@@ -406,9 +404,9 @@ class LDA:
             raise ValueError("no model computed")
 
         tarr = np.asarray(t, dtype=np.float)
-        
+
         try:
-            return np.dot(tarr-self._mean, self._coeff)
+            return np.dot(tarr - self._mean, self._coeff)
         except:
             ValueError("t, coeff: shape mismatch")
 
@@ -424,7 +422,7 @@ class LDA:
 class SRDA:
     """Spectral Regression Discriminant Analysis.
     """
-    
+
     def __init__(self, alpha=0.001):
         """Initialization.
 
@@ -432,7 +430,7 @@ class SRDA:
            alpha : float (>=0)
               regularization parameter
         """
-        
+
         self._coeff = None
         self._mean = None
         self._alpha = alpha
@@ -446,18 +444,18 @@ class SRDA:
 
         xarr = np.asarray(x, dtype=np.float)
         yarr = np.asarray(y, dtype=np.int)
-        
+
         if xarr.ndim != 2:
             raise ValueError("x must be a 2d array_like object")
-        
+
         if yarr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y shape mismatch")
-        
+
         self._mean = np.mean(xarr, axis=0)
-        self._coeff = srda(xarr-self._mean, yarr, self._alpha)
+        self._coeff = srda(xarr - self._mean, yarr, self._alpha)
 
     def transform(self, t):
         """Embed t (M,P) into the C-1 dimensional space.
@@ -468,9 +466,9 @@ class SRDA:
             raise ValueError("no model computed")
 
         tarr = np.asarray(t, dtype=np.float)
-        
+
         try:
-            return np.dot(tarr-self._mean, self._coeff)
+            return np.dot(tarr - self._mean, self._coeff)
         except:
             ValueError("t, coeff: shape mismatch")
 
@@ -486,7 +484,7 @@ class SRDA:
 class KFDA:
     """Kernel Fisher Discriminant Analysis.
     """
-    
+
     def __init__(self, lmb=0.001, kernel=None):
         """Initialization.
         
@@ -500,11 +498,10 @@ class KFDA:
               test) data in input space.
         """
 
-        
         if kernel is not None:
             if not isinstance(kernel, Kernel):
                 raise ValueError("kernel must be None or a mlpy.Kernel object")
-    
+
         self._kernel = kernel
         self._x = None
         self._coeff = None
@@ -536,7 +533,7 @@ class KFDA:
         labels = np.unique(yarr)
         if labels.shape[0] != 2:
             raise ValueError("number of classes must be = 2")
-        
+
         self._coeff = kfda(Karr, yarr, self._lmb)
 
     def transform(self, Kt):
@@ -570,7 +567,7 @@ class KFDA:
 class PCA:
     """Principal Component Analysis.
     """
-    
+
     def __init__(self, method='svd', whiten=False):
         """Initialization.
         
@@ -581,13 +578,13 @@ class PCA:
               whitening. The eigenvectors will be scaled
               by eigenvalues**-(1/2)
         """
-        
+
         self._coeff = None
         self._coeff_inv = None
         self._evals = None
         self._mean = None
         self._method = method
-        self._whiten = whiten        
+        self._whiten = whiten
 
     def learn(self, x):
         """Compute the principal component coefficients.
@@ -598,14 +595,15 @@ class PCA:
         xarr = np.asarray(x, dtype=np.float)
         if xarr.ndim != 2:
             raise ValueError("x must be a 2d array_like object")
-        
+
         self._mean = np.mean(xarr, axis=0)
         self._coeff, self._evals = pca(x, method=self._method)
 
         if self._whiten:
-            self._coeff_inv = np.empty((self._coeff.shape[1], 
-                self._coeff.shape[0]), dtype=np.float)
-            
+            self._coeff_inv = np.empty(
+                (self._coeff.shape[1], self._coeff.shape[0]), dtype=np.float
+            )
+
             for i in range(len(self._evals)):
                 eval_sqrt = np.sqrt(self._evals[i])
                 self._coeff_inv[i] = self._coeff[:, i] * \
@@ -622,7 +620,7 @@ class PCA:
 
         if self._coeff is None:
             raise ValueError("no PCA computed")
-        
+
         if k == None:
             k = self._coeff.shape[1]
 
@@ -633,10 +631,10 @@ class PCA:
         tarr = np.asarray(t, dtype=np.float)
 
         try:
-            return np.dot(tarr-self._mean, self._coeff[:, :k])
+            return np.dot(tarr - self._mean, self._coeff[:, :k])
         except:
             raise ValueError("t, coeff: shape mismatch")
-            
+
     def transform_inv(self, z):
         """Transform data back to its original space,
         where `z` is a (M,K) matrix. Returns a (M,P) matrix.
@@ -649,34 +647,34 @@ class PCA:
 
         return np.dot(zarr, self._coeff_inv[:zarr.shape[1]]) +\
             self._mean
-        
+
     def coeff(self):
         """Returns the tranformation matrix (P,L), where
         L=min(N,P), sorted by decreasing eigenvalue.
         Each column contains coefficients for one principal 
         component.
         """
-        
+
         return self._coeff
-    
+
     def coeff_inv(self):
         """Returns the inverse of tranformation matrix (L,P),
         where L=min(N,P), sorted by decreasing eigenvalue.
         """
-        
+
         return self._coeff_inv
 
     def evals(self):
         """Returns sorted eigenvalues (L), where L=min(N,P).
         """
-        
+
         return self._evals
 
 
 class PCAFast:
     """Fast Principal Component Analysis.
     """
-    
+
     def __init__(self, k=2, eps=0.01):
         """Initialization.
         
@@ -686,12 +684,12 @@ class PCAFast:
            eps : float (> 0)
               tolerance error
         """
-        
+
         self._coeff = None
         self._coeff_inv = None
         self._mean = None
         self._k = k
-        self._eps = eps        
+        self._eps = eps
 
     def learn(self, x):
         """Compute the firsts `k` principal component coefficients.
@@ -702,7 +700,7 @@ class PCAFast:
         xarr = np.asarray(x, dtype=np.float)
         if xarr.ndim != 2:
             raise ValueError("x must be a 2d array_like object")
-        
+
         self._mean = np.mean(xarr, axis=0)
         self._coeff = pca_fast(xarr, m=self._k, eps=self._eps)
         self._coeff_inv = self._coeff.T
@@ -718,10 +716,10 @@ class PCAFast:
         tarr = np.asarray(t, dtype=np.float)
 
         try:
-            return np.dot(tarr-self._mean, self._coeff)
+            return np.dot(tarr - self._mean, self._coeff)
         except:
             raise ValueError("t, coeff: shape mismatch")
-            
+
     def transform_inv(self, z):
         """Transform data back to its original space,
         where `z` is a (M,K) matrix. Returns a (M,P) matrix.
@@ -732,28 +730,28 @@ class PCAFast:
 
         zarr = np.asarray(z, dtype=np.float)
         return np.dot(zarr, self._coeff_inv) + self._mean
-        
+
     def coeff(self):
         """Returns the tranformation matrix (P,K) sorted by 
         decreasing eigenvalue.
         Each column contains coefficients for one principal 
         component.
         """
-        
+
         return self._coeff
-    
+
     def coeff_inv(self):
         """Returns the inverse of tranformation matrix (K,P),
         sorted by decreasing eigenvalue.
         """
-        
+
         return self._coeff_inv
 
 
 class KPCA:
     """Kernel Principal Component Analysis.
     """
-    
+
     def __init__(self, kernel=None):
         """Initialization.
         
@@ -768,7 +766,7 @@ class KPCA:
         if kernel is not None:
             if not isinstance(kernel, Kernel):
                 raise ValueError("kernel must be None or a mlpy.Kernel object")
-        
+
         self._coeff = None
         self._evals = None
         self._K = None
@@ -787,7 +785,7 @@ class KPCA:
         Karr = np.asarray(K, dtype=np.float)
         if Karr.ndim != 2:
             raise ValueError("K must be a 2d array_like object")
-        
+
         if self._kernel is None:
             if Karr.shape[0] != Karr.shape[1]:
                 raise ValueError("K must be a square matrix")
@@ -798,7 +796,7 @@ class KPCA:
         self._K = Karr.copy()
         Karr = kernel.kernel_center(Karr, Karr)
         self._coeff, self._evals = kpca(Karr)
-       
+
     def transform(self, Kt, k=None):
         """Embed Kt into the `k` dimensional subspace.
         
@@ -810,7 +808,7 @@ class KPCA:
 
         if self._coeff is None:
             raise ValueError("no KPCA computed")
-        
+
         if k == None:
             k = self._coeff.shape[1]
 
@@ -821,24 +819,23 @@ class KPCA:
         Ktarr = np.asarray(Kt, dtype=np.float)
         if self._kernel is not None:
             Ktarr = self._kernel.kernel(Ktarr, self._x)
-        
+
         Ktarr = kernel.kernel_center(Ktarr, self._K)
 
         try:
             return np.dot(Ktarr, self._coeff[:, :k])
         except:
             raise ValueError("Kt, coeff: shape mismatch")
- 
+
     def coeff(self):
         """Returns the tranformation matrix (N,N) sorted by 
         decreasing eigenvalue.
         """
-        
+
         return self._coeff
-    
+
     def evals(self):
         """Returns sorted eigenvalues (N).
         """
-        
+
         return self._evals
-   

@@ -4,7 +4,7 @@
 ## Yijun Sun. 'Iterative RELIEF for Feature Weightinig: Algorithms,
 ## Theories and Application'. In IEEE Transactions on Pattern Analysis
 ## and Machine Intelligence, 2006.
-    
+
 ## This code is written by Davide Albanese, <albanese@fbk.eu>.
 ## (C) 2007 mlpy Developers.
 
@@ -43,7 +43,7 @@ def norm(x, n):
     """
     Compute n-norm.
     """
-    return (sum(abs(x)**n))**(1.0/float(n))
+    return (sum(abs(x) ** n)) ** (1.0 / float(n))
 
 
 def kernel(d, sigma):
@@ -52,7 +52,7 @@ def kernel(d, sigma):
 
     See p. 7.
     """
-    return exp(-d/float(sigma))  
+    return exp(-d / float(sigma))
 
 
 def compute_M_H(y):
@@ -70,7 +70,7 @@ def compute_M_H(y):
         Hn = Hn[Hn != n].tolist()
         H.append(Hn)
     return (M, H)
-    
+
 
 def compute_distance_kernel(x, w, sigma):
     """
@@ -78,13 +78,13 @@ def compute_distance_kernel(x, w, sigma):
 
     See p. 7.
     """
-    d = zeros((x.shape[0], x.shape[0]), dtype = float)
+    d = zeros((x.shape[0], x.shape[0]), dtype=float)
     for i in range(x.shape[0]):
         for j in range(i + 1, x.shape[0]):
-            d[i][j] = norm_w(x[i]-x[j], w)
+            d[i][j] = norm_w(x[i] - x[j], w)
             d[j][i] = d[i][j]
     dk = kernel(d, sigma)
-   
+
     return dk
 
 
@@ -93,10 +93,10 @@ def compute_prob(x, dist_k, i, n, indices):
     See Eqs. (8), (9)
     """
 
-    den = dist_k[n][indices].sum()    
+    den = dist_k[n][indices].sum()
     if den == 0.0:
         raise SigmaError("sigma (kernel parameter) too small")
-    
+
     return dist_k[n][i] / float(den)
 
 
@@ -113,7 +113,7 @@ def compute_gn(x, dist_k, n, Mn):
         raise SigmaError("sigma (kernel parameter) too small")
 
     return 1.0 - (num / float(den))
-       
+
 
 def compute_w(x, w, M, H, sigma):
     """
@@ -124,11 +124,11 @@ def compute_w(x, w, M, H, sigma):
     I = x.shape[1]
 
     # Compute ni
-    ni = zeros(I, dtype = float)
+    ni = zeros(I, dtype=float)
     dist_k = compute_distance_kernel(x, w, sigma)
-    for n in range(N):        
-        m_n = zeros(I, dtype = float)
-        h_n = zeros(I, dtype = float)
+    for n in range(N):
+        m_n = zeros(I, dtype=float)
+        h_n = zeros(I, dtype=float)
         for i in M[n]:
             a_in = compute_prob(x, dist_k, i, n, M[n])
             m_in = abs(x[n] - x[i])
@@ -136,16 +136,16 @@ def compute_w(x, w, M, H, sigma):
         for i in H[n]:
             b_in = compute_prob(x, dist_k, i, n, H[n])
             h_in = abs(x[n] - x[i])
-            h_n += b_in * h_in        
+            h_n += b_in * h_in
         g_n = compute_gn(x, dist_k, n, M[n])
-        ni += g_n * (m_n - h_n)            
+        ni += g_n * (m_n - h_n)
 
     ni = ni / float(N)
-        
+
     # Compute (ni)+ / ||(ni)+||_2
     ni_p = maximum(ni, 0.0)
     ni_p_norm2 = norm(ni_p, 2)
-   
+
     return ni_p / ni_p_norm2
 
 
@@ -156,9 +156,9 @@ def compute_irelief(x, y, T, sigma, theta):
 
     w_old = ones(x.shape[1]) / float(x.shape[1])
     M, H = compute_M_H(y)
-    
+
     for t in range(T):
-        w = compute_w(x, w_old, M, H, sigma) 
+        w = compute_w(x, w_old, M, H, sigma)
         stp = norm(w - w_old, 2)
         if stp < theta:
             break
@@ -169,7 +169,7 @@ def compute_irelief(x, y, T, sigma, theta):
 class IRelief:
     """Iterative RELIEF for feature weighting.
     """
-   
+
     def __init__(self, T=1000, sigma=1.0, theta=0.001):
         """
         :Parameters:
@@ -187,7 +187,7 @@ class IRelief:
             raise ValueError("sigma (kernel width) must be > 0.0")
         if theta <= 0.0:
             raise ValueError("theta (convergence parameter) must be > 0.0")
-         
+
         self._T = T
         self._sigma = sigma
         self._theta = theta
@@ -206,16 +206,16 @@ class IRelief:
         :Raises:
            SigmaError
         """
-        
+
         xarr = asarray(x, dtype=float)
         yarr = asarray(y, dtype=int)
 
         if xarr.ndim != 2:
             raise ValueError("x must be a 2d array_like object")
-        
+
         if yarr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y: shape mismatch")
 
@@ -228,7 +228,7 @@ class IRelief:
     def weights(self):
         """Returns the feature weights.
         """
-        
+
         if self._w is None:
             raise ValueError("no model computed.")
 
@@ -242,4 +242,3 @@ class IRelief:
             raise ValueError("no model computed.")
 
         return self._loops
-        

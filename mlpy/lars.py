@@ -45,7 +45,7 @@ def lars_base(x, y, maxsteps=None):
     xarr = np.asarray(x)
     yarr = np.asarray(y)
 
-    ms = np.min((xarr.shape[0]-1, xarr.shape[1]))
+    ms = np.min((xarr.shape[0] - 1, xarr.shape[1]))
     if (maxsteps == None) or (maxsteps > ms):
         maxsteps = ms
 
@@ -53,7 +53,7 @@ def lars_base(x, y, maxsteps=None):
     active = []
     inactive = range(xarr.shape[1])
     beta = np.zeros(xarr.shape[1], dtype=np.float)
-    est = np.zeros((maxsteps+1, xarr.shape[1]), dtype=np.float)
+    est = np.zeros((maxsteps + 1, xarr.shape[1]), dtype=np.float)
 
     for i in range(maxsteps):
 
@@ -62,7 +62,7 @@ def lars_base(x, y, maxsteps=None):
 
         # equation 2.9
         ct = c.copy()
-        ct[active] = 0.0 # avoid re-selections
+        ct[active] = 0.0  # avoid re-selections
         ct_abs = np.abs(ct)
         j = np.argmax(ct_abs)
 
@@ -79,7 +79,7 @@ def lars_base(x, y, maxsteps=None):
         # equation 2.5
         G = np.dot(xa.T, xa)
         Gi = np.linalg.inv(G)
-        A = np.sum(Gi)**(-0.5)
+        A = np.sum(Gi) ** (-0.5)
 
         # equation 2.6
         w = np.sum(A * Gi, axis=1)
@@ -95,13 +95,13 @@ def lars_base(x, y, maxsteps=None):
         g = g[g > 0.0]
 
         if g.shape[0] == 0:
-            gammahat = C / A # page 9
+            gammahat = C / A  # page 9
         else:
             gammahat = np.min(g)
 
         beta[active] = beta[active] + gammahat * w
-        est[i+1, active] = beta[active] * s
-        mu = mu + (gammahat * u) # equation 2.12
+        est[i + 1, active] = beta[active] * s
+        mu = mu + (gammahat * u)  # equation 2.12
 
     return np.asarray(active), est, maxsteps
 
@@ -157,7 +157,7 @@ class LARS():
         xarr -= xmean
 
         # normalize x
-        xnorm = np.sqrt(np.sum((xarr)**2, axis=0))
+        xnorm = np.sqrt(np.sum((xarr) ** 2, axis=0))
         xarr /= xnorm
 
         # center y

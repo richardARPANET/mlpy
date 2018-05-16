@@ -18,6 +18,7 @@ __all__ = ["ols_base", "OLS"]
 
 import numpy as np
 
+
 def ols_base(x, y, tol):
     """Ordinary (Linear) Least Squares.
 
@@ -89,8 +90,9 @@ class OLS:
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y shape mismatch")
 
-        xarr = np.concatenate((np.ones((xarr.shape[0], 1),
-                   dtype=np.float), xarr), axis=1)
+        xarr = np.concatenate(
+            (np.ones((xarr.shape[0], 1), dtype=np.float), xarr), axis=1
+        )
 
         beta, self._rank = ols_base(xarr, yarr, self._tol)
         self._beta = beta[1:]
@@ -139,4 +141,3 @@ class OLS:
         """
 
         return self._rank
-

@@ -19,9 +19,9 @@
 from numpy import *
 from .. import gsl
 
-__all__ = ["cwt", "icwt", "autoscales", "fourier_from_scales",
-           "scales_from_fourier"]
-
+__all__ = [
+    "cwt", "icwt", "autoscales", "fourier_from_scales", "scales_from_fourier"
+]
 
 PI2 = 2 * pi
 
@@ -42,13 +42,13 @@ def morletft(s, w, w0, dt):
       * (normalized) fourier transformed morlet function
     """
 
-    p = 0.75112554446494251 # pi**(-1.0/4.0)
+    p = 0.75112554446494251  # pi**(-1.0/4.0)
     wavelet = zeros((s.shape[0], w.shape[0]))
     pos = w > 0
 
     for i in range(s.shape[0]):
         n = normalization(s[i], dt)
-        wavelet[i][pos] = n * p * exp(-(s[i] * w[pos] - w0)**2 / 2.0)
+        wavelet[i][pos] = n * p * exp(-(s[i] * w[pos] - w0) ** 2 / 2.0)
 
     return wavelet
 
@@ -65,14 +65,14 @@ def paulft(s, w, order, dt):
       * (normalized) fourier transformed paul function
     """
 
-    p = 2.0**order / sqrt(order * gsl.sf_fact((2 * order) - 1))
+    p = 2.0 ** order / sqrt(order * gsl.sf_fact((2 * order) - 1))
     wavelet = zeros((s.shape[0], w.shape[0]))
     pos = w > 0
 
     for i in range(s.shape[0]):
         n = normalization(s[i], dt)
         tmp = s[i] * w[pos]
-        wavelet[i][pos] = n * p * tmp**order * exp(-tmp)
+        wavelet[i][pos] = n * p * tmp ** order * exp(-tmp)
 
     return wavelet
 
@@ -89,13 +89,13 @@ def dogft(s, w, order, dt):
       * (normalized) fourier transformed DOG function
     """
 
-    p =  - (0.0 + 1.0j)**order  / sqrt(gsl.sf_gamma(order + 0.5))
-    wavelet = zeros((s.shape[0], w.shape[0]), dtype = complex128)
+    p = -(0.0 + 1.0j) ** order / sqrt(gsl.sf_gamma(order + 0.5))
+    wavelet = zeros((s.shape[0], w.shape[0]), dtype=complex128)
 
     for i in range(s.shape[0]):
         n = normalization(s[i], dt)
         h = s[i] * w
-        wavelet[i] = n * p * h**order * exp(-h**2 / 2.0)
+        wavelet[i] = n * p * h ** order * exp(-h ** 2 / 2.0)
 
     return wavelet
 
@@ -128,7 +128,7 @@ def angularfreq(N, dt):
 
 
 def autoscales(N, dt, dj, wf, p):
-     """Compute scales as fractional power of two.
+    """Compute scales as fractional power of two.
 
      :Parameters:
         N : integer
@@ -147,24 +147,24 @@ def autoscales(N, dt, dj, wf, p):
            scales
      """
 
-     if wf == 'dog':
-         s0 = (dt * sqrt(p + 0.5)) / pi
-     elif wf == 'paul':
-         s0 = (dt * ((2 * p) + 1)) / (2 * pi)
-     elif wf == 'morlet':
-         s0 = (dt * (p + sqrt(2 + p**2))) / (2 * pi)
-     else:
-         raise ValueError('wavelet function not available')
+    if wf == 'dog':
+        s0 = (dt * sqrt(p + 0.5)) / pi
+    elif wf == 'paul':
+        s0 = (dt * ((2 * p) + 1)) / (2 * pi)
+    elif wf == 'morlet':
+        s0 = (dt * (p + sqrt(2 + p ** 2))) / (2 * pi)
+    else:
+        raise ValueError('wavelet function not available')
 
-     #  See (9) and (10) at page 67.
+    #  See (9) and (10) at page 67.
 
-     J = floor(dj**-1 * log2((N * dt) / s0))
-     s = empty(J + 1)
+    J = floor(dj ** -1 * log2((N * dt) / s0))
+    s = empty(J + 1)
 
-     for i in range(s.shape[0]):
-         s[i] = s0 * 2**(i * dj)
+    for i in range(s.shape[0]):
+        s[i] = s0 * 2 ** (i * dj)
 
-     return s
+    return s
 
 
 def fourier_from_scales(scales, wf, p):
@@ -187,11 +187,11 @@ def fourier_from_scales(scales, wf, p):
     scales_arr = asarray(scales)
 
     if wf == 'dog':
-        return  (2 * pi * scales_arr) / sqrt(p + 0.5)
+        return (2 * pi * scales_arr) / sqrt(p + 0.5)
     elif wf == 'paul':
-        return  (4 * pi * scales_arr) / float((2 * p) + 1)
+        return (4 * pi * scales_arr) / float((2 * p) + 1)
     elif wf == 'morlet':
-        return  (4 * pi * scales_arr) / (p + sqrt(2 + p**2))
+        return (4 * pi * scales_arr) / (p + sqrt(2 + p ** 2))
     else:
         raise ValueError('wavelet function not available')
 
@@ -215,11 +215,11 @@ def scales_from_fourier(f, wf, p):
     f_arr = asarray(f)
 
     if wf == 'dog':
-        return  (f_arr * sqrt(p + 0.5)) / (2 * pi)
+        return (f_arr * sqrt(p + 0.5)) / (2 * pi)
     elif wf == 'paul':
         return (f_arr * ((2 * p) + 1)) / (4 * pi)
     elif wf == 'morlet':
-        return (f_arr * (p + sqrt(2 + p**2))) / (4 * pi)
+        return (f_arr * (p + sqrt(2 + p ** 2))) / (4 * pi)
     else:
         raise ValueError('wavelet function not available')
 
@@ -244,7 +244,6 @@ def cwt(x, dt, scales, wf='dog', p=2):
        X : 2d numpy array
           transformed data
     """
-
 
     x_arr = asarray(x) - mean(x)
     scales_arr = asarray(scales)

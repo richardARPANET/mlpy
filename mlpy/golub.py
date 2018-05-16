@@ -28,15 +28,15 @@ class Golub:
 
     .. [Golub99] T R Golub et al. Molecular classification of cancer: Class discovery and class prediction by gene expression monitoring. Science, 1999.
     """
-    
+
     def __init__(self):
         """Initialization.
         """
-        
+
         self._labels = None
         self._w = None
         self._mean = None
-        
+
     def learn(self, x, y):
         """Learning method.
         
@@ -46,25 +46,25 @@ class Golub:
            y : 1d array_like object integer (only two classes)
               target values (N)
         """
-        
+
         xarr = np.asarray(x, dtype=np.float)
         yarr = np.asarray(y, dtype=np.int)
-        
+
         if xarr.ndim != 2:
             raise ValueError("x must be a 2d array_like object")
-        
+
         if yarr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y: shape mismatch")
-        
+
         self._labels = np.unique(yarr)
         k = self._labels.shape[0]
 
         if k != 2:
             raise ValueError("number of classes must be = 2")
-        
+
         idxn = yarr == self._labels[0]
         idxp = yarr == self._labels[1]
         meann = np.mean(xarr[idxn], axis=0)
@@ -73,7 +73,7 @@ class Golub:
         stdp = np.std(xarr[idxp], axis=0, ddof=1)
         self._w = (meanp - meann) / (stdp + stdn)
         self._mean = 0.5 * (meanp + meann)
-        
+
     def pred(self, t):
         """Prediction method.
         
@@ -84,30 +84,30 @@ class Golub:
 
         if self._w is None:
             raise ValueError("no model computed")
-        
+
         tarr = np.asarray(t, dtype=np.float)
         if tarr.ndim > 2:
             raise ValueError("t must be an 1d or a 2d array_like object")
-        
+
         try:
-            tmp = np.dot(tarr-self._mean, self._w)
+            tmp = np.dot(tarr - self._mean, self._w)
         except ValueError:
             raise ValueError("t, model: shape mismatch")
-        
+
         return np.where(tmp>0, self._labels[1], self._labels[0]) \
             .astype(np.int)
-    
+
     def w(self):
         """Returns the coefficients.
         """
-        
+
         if self._w is None:
             raise ValueError("no model computed")
-        
+
         return self._w
 
     def labels(self):
         """Outputs the name of labels.
         """
-        
+
         return self._labels

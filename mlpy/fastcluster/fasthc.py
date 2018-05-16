@@ -16,7 +16,6 @@
 
 __all__ = ['MFastHCluster']
 
-
 import numpy as np
 import scipy.cluster.hierarchy as hierarchy
 import fastcluster
@@ -28,14 +27,14 @@ class MFastHCluster:
     This method needs O(NP) memory for clustering of N point in R^P.
     """
 
-    def __init__ (self, method='single'):
+    def __init__(self, method='single'):
         """Initialization.
 
         :Parameters:
           method : string ('single', 'centroid', 'median', 'ward')
             the agglomeration method to be used
         """
-        
+
         self._method = method
         self._Z = None
 
@@ -49,14 +48,15 @@ class MFastHCluster:
              vector data, N observations in R^P
         """
 
-        self._Z = fastcluster.linkage_vector(X=x, method=self._method, 
-            metric='euclidean', extraarg=None)
-        
+        self._Z = fastcluster.linkage_vector(
+            X=x, method=self._method, metric='euclidean', extraarg=None
+        )
+
     def Z(self):
         """Returns the hierarchical clustering encoded as a 
         linkage matrix. See `scipy.cluster.hierarchy.linkage`.
         """
-        
+
         return self._Z
 
     def cut(self, t):

@@ -14,9 +14,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ["Kernel", "KernelLinear", "KernelPolynomial", "KernelGaussian",
-           "KernelExponential", "KernelSigmoid"]
-
+__all__ = [
+    "Kernel", "KernelLinear", "KernelPolynomial", "KernelGaussian",
+    "KernelExponential", "KernelSigmoid"
+]
 
 import sys
 if sys.version >= '3':
@@ -24,55 +25,67 @@ if sys.version >= '3':
 else:
     import kernel
 
+
 class Kernel:
     """Base class for kernels.
     """
 
     pass
 
+
 class KernelLinear(Kernel):
     """Linear kernel, t_i' x_j.
     """
+
     def __init__(self):
         pass
+
     def kernel(self, t, x):
         return kernel.kernel_linear(t, x)
+
 
 class KernelPolynomial(Kernel):
     """Polynomial kernel, (gamma t_i' x_j + b)^d.
     """
+
     def __init__(self, gamma=1.0, b=1.0, d=2.0):
         self.gamma = gamma
         self.b = b
         self.d = d
+
     def kernel(self, t, x):
-        return kernel.kernel_polynomial(t, x,
-                   self.gamma, self.b, self.d)
+        return kernel.kernel_polynomial(t, x, self.gamma, self.b, self.d)
+
 
 class KernelGaussian(Kernel):
     """Gaussian kernel, exp(-||t_i - x_j||^2 / 2 * sigma^2).
     """
+
     def __init__(self, sigma=1.0):
         self.sigma = sigma
+
     def kernel(self, t, x):
-        return kernel.kernel_gaussian(t, x,
-                   self.sigma)
+        return kernel.kernel_gaussian(t, x, self.sigma)
+
 
 class KernelExponential(Kernel):
     """Exponential kernel, exp(-||t_i - x_j|| / 2 * sigma^2).
     """
+
     def __init__(self, sigma=1.0):
         self.sigma = sigma
+
     def kernel(self, t, x):
-        return kernel.kernel_exponential(t, x,
-                   self.sigma)
+        return kernel.kernel_exponential(t, x, self.sigma)
+
 
 class KernelSigmoid(Kernel):
     """Sigmoid kernel, tanh(gamma t_i' x_j + b).
     """
+
     def __init__(self, gamma=1.0, b=1.0):
         self.gamma = gamma
         self.b = b
+
     def kernel(self, t, x):
-        return kernel.kernel_sigmoid(t, x,
-            self.gamma, self.b)
+        return kernel.kernel_sigmoid(t, x, self.gamma, self.b)

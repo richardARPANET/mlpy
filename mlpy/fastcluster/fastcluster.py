@@ -18,7 +18,10 @@ is located in the directory inst/doc/ in the source distribution and may
 also be obtained at <http://math.stanford.edu/~muellner/fastcluster.html>.
 '''
 
-__all__ = ['single', 'complete', 'average', 'weighted', 'ward', 'centroid', 'median', 'linkage', 'linkage_vector']
+__all__ = [
+    'single', 'complete', 'average', 'weighted', 'ward', 'centroid', 'median',
+    'linkage', 'linkage_vector'
+]
 __version_info__ = ('1', '1', '2')
 __version__ = '.'.join(__version_info__)
 
@@ -38,43 +41,53 @@ def single(D):
 function for further information.'''
     return linkage(D, method='single')
 
+
 def complete(D):
     '''Complete linkage clustering (alias). See the help on the “linkage”
 function for further information.'''
     return linkage(D, method='complete')
+
 
 def average(D):
     '''Hierarchical clustering with the “average” distance update formula
 (alias). See the help on the “linkage” function for further information.'''
     return linkage(D, method='average')
 
+
 def weighted(D):
     '''Hierarchical clustering with the “weighted” distance update formula
 (alias). See the help on the “linkage” function for further information.'''
     return linkage(D, method='weighted')
+
 
 def ward(D):
     '''Hierarchical clustering with the “Ward” distance update formula
 (alias). See the help on the “linkage” function for further information.'''
     return linkage(D, method='ward')
 
+
 def centroid(D):
     '''Hierarchical clustering with the “centroid” distance update formula
 (alias). See the help on the “linkage” function for further information.'''
     return linkage(D, method='centroid')
+
 
 def median(D):
     '''Hierarchical clustering with the “median” distance update formula
 (alias). See the help on the “linkage” function for further information.'''
     return linkage(D, method='median')
 
-mthidx = {'single'   : 0,
-          'complete' : 1,
-          'average'  : 2,
-          'weighted' : 3,
-          'ward'     : 4,
-          'centroid' : 5,
-          'median'   : 6 }
+
+mthidx = {
+    'single': 0,
+    'complete': 1,
+    'average': 2,
+    'weighted': 3,
+    'ward': 4,
+    'centroid': 5,
+    'median': 6
+}
+
 
 def linkage(X, method='single', metric='euclidean', preserve_input=True):
     '''Hierarchical, agglomerative clustering on a dissimilarity matrix or on
@@ -227,48 +240,56 @@ the pairwise closest points in each step.
 Also, the linkage method does not treat NumPy's masked arrays as special
 and simply ignores the mask.'''
     X = array(X, copy=False, subok=True)
-    if X.ndim==1:
-        if method=='single':
+    if X.ndim == 1:
+        if method == 'single':
             preserve_input = False
         X = array(X, dtype=double, copy=preserve_input, order='C', subok=True)
         NN = X.shape[0]
-        N = int(ceil(sqrt(NN*2)))
-        if (N*(N-1)/2) != NN:
-            raise ValueError('The length of the condensed distance matrix must be (k \choose 2) for k data points!')
+        N = int(ceil(sqrt(NN * 2)))
+        if (N * (N - 1) / 2) != NN:
+            raise ValueError(
+                'The length of the condensed distance matrix must be (k \choose 2) for k data points!'
+            )
     else:
-        assert X.ndim==2
+        assert X.ndim == 2
         N = X.shape[0]
         X = pdist(X, metric)
         X = array(X, dtype=double, copy=False, order='C', subok=True)
-    Z = empty((N-1,4))
+    Z = empty((N - 1, 4))
     if N > 1:
         linkage_wrap(N, X, Z, mthidx[method])
     return Z
 
-mtridx = {'euclidean'      :  0,
-          'minkowski'      :  1,
-          'cityblock'      :  2,
-          'seuclidean'     :  3,
-          'sqeuclidean'    :  4,
-          'cosine'         :  5,
-          'hamming'        :  6,
-          'jaccard'        :  7,
-          'chebychev'      :  8,
-          'canberra'       :  9,
-          'braycurtis'     : 10,
-          'mahalanobis'    : 11,
-          'yule'           : 12,
-          'matching'       : 13,
-          'sokalmichener'  : 13, # an alias for 'matching'
-          'dice'           : 14,
-          'rogerstanimoto' : 15,
-          'russellrao'     : 16,
-          'sokalsneath'    : 17,
-          'kulsinski'      : 18,
-          'USER'           : 19,
-          }
 
-booleanmetrics = ('yule', 'matching', 'dice', 'kulsinski', 'rogerstanimoto', 'sokalmichener', 'russellrao', 'sokalsneath', 'kulsinski')
+mtridx = {
+    'euclidean': 0,
+    'minkowski': 1,
+    'cityblock': 2,
+    'seuclidean': 3,
+    'sqeuclidean': 4,
+    'cosine': 5,
+    'hamming': 6,
+    'jaccard': 7,
+    'chebychev': 8,
+    'canberra': 9,
+    'braycurtis': 10,
+    'mahalanobis': 11,
+    'yule': 12,
+    'matching': 13,
+    'sokalmichener': 13,  # an alias for 'matching'
+    'dice': 14,
+    'rogerstanimoto': 15,
+    'russellrao': 16,
+    'sokalsneath': 17,
+    'kulsinski': 18,
+    'USER': 19,
+}
+
+booleanmetrics = (
+    'yule', 'matching', 'dice', 'kulsinski', 'rogerstanimoto', 'sokalmichener',
+    'russellrao', 'sokalsneath', 'kulsinski'
+)
+
 
 def linkage_vector(X, method='single', metric='euclidean', extraarg=None):
     '''Hierarchical (agglomerative) clustering on Euclidean data.
@@ -446,37 +467,41 @@ metric='matching':
   (False, True) but the Hamming distance is 0.5.
 
 metric='sokalmichener' is an alias for 'matching'.'''
-    if method=='single':
-        assert metric!='USER'
+    if method == 'single':
+        assert metric != 'USER'
         if metric in ('hamming', 'jaccard'):
             X = array(X, copy=False, subok=True)
-            dtype = bool if X.dtype==bool else double
+            dtype = bool if X.dtype == bool else double
         else:
             dtype = bool if metric in booleanmetrics else double
         X = array(X, dtype=dtype, copy=False, order='C', subok=True)
     else:
-        assert metric=='euclidean'
-        X = array(X, dtype=double, copy=(method=='ward'), order='C', subok=True)
-    assert X.ndim==2
+        assert metric == 'euclidean'
+        X = array(
+            X, dtype=double, copy=(method == 'ward'), order='C', subok=True
+        )
+    assert X.ndim == 2
     N = X.shape[0]
-    Z = empty((N-1,4))
+    Z = empty((N - 1, 4))
 
-    if metric=='seuclidean':
+    if metric == 'seuclidean':
         if extraarg is None:
             extraarg = var(X, axis=0, ddof=1)
-    elif metric=='mahalanobis':
+    elif metric == 'mahalanobis':
         if extraarg is None:
             extraarg = inv(cov(X, rowvar=False))
         # instead of the inverse covariance matrix, pass the matrix product
         # with the data matrix!
-        extraarg = array(dot(X,extraarg),dtype=double, copy=False, order='C', subok=True)
-    elif metric=='correlation':
-        X = X-expand_dims(X.mean(axis=1),1)
-        metric='cosine'
-    elif type(metric)!=str:
+        extraarg = array(
+            dot(X, extraarg), dtype=double, copy=False, order='C', subok=True
+        )
+    elif metric == 'correlation':
+        X = X - expand_dims(X.mean(axis=1), 1)
+        metric = 'cosine'
+    elif type(metric) != str:
         assert extraarg is None
         metric, extraarg = 'USER', metric
-    elif metric!='minkowski':
+    elif metric != 'minkowski':
         assert extraarg is None
     if N > 1:
         linkage_vector_wrap(X, Z, mthidx[method], mtridx[metric], extraarg)

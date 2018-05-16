@@ -18,6 +18,7 @@ __all__ = ['elasticnet_base', 'ElasticNet', 'ElasticNetC']
 
 import numpy as np
 
+
 def softt(beta0, lmb):
     """Soft thresholding.
     """
@@ -107,8 +108,8 @@ def elasticnet_base(x, y, lmb, eps, supp=True, tol=0.01):
         tmp = beta0 + (step * (np.dot(-xt, np.dot(xarr, beta0)) + xy))
         beta = softt(tmp, lmb) * damp
 
-        i, k = i+1, k+1
-        imax = np.max((1000, 10**np.floor(np.log10(k))))
+        i, k = i + 1, k + 1
+        imax = np.max((1000, 10 ** np.floor(np.log10(k))))
 
     return beta, k
 
@@ -183,14 +184,20 @@ class ElasticNet(object):
         xarr -= xmean
 
         # normalize x
-        xnorm = np.sqrt(np.sum((xarr)**2, axis=0))
+        xnorm = np.sqrt(np.sum((xarr) ** 2, axis=0))
         xarr /= xnorm
 
         # center y
         ymean = np.mean(yarr)
 
-        self._beta, self._iters = elasticnet_base(xarr, yarr,
-            lmb=self._lmb, eps=self._eps, supp=self._supp, tol=self._tol)
+        self._beta, self._iters = elasticnet_base(
+            xarr,
+            yarr,
+            lmb=self._lmb,
+            eps=self._eps,
+            supp=self._supp,
+            tol=self._tol
+        )
         self._beta /= xnorm
         self._beta0 = ymean - np.dot(xmean, self._beta)
 
@@ -269,7 +276,7 @@ class ElasticNetC(ElasticNet):
             tol : double
                tolerance for convergence
         """
-        
+
         ElasticNet.__init__(self, lmb, eps, supp=True, tol=0.01)
         self._labels = None
 
@@ -285,12 +292,12 @@ class ElasticNetC(ElasticNet):
 
         yarr = np.asarray(y, dtype=np.int)
         self._labels = np.unique(yarr)
-        
+
         k = self._labels.shape[0]
         if k != 2:
             raise ValueError("number of classes must be = 2")
 
-        ynew = np.where(yarr == self._labels[0], -1, 1) 
+        ynew = np.where(yarr == self._labels[0], -1, 1)
 
         ElasticNet.learn(self, x, ynew)
 
@@ -307,7 +314,7 @@ class ElasticNetC(ElasticNet):
         """
 
         p = ElasticNet.pred(self, t)
-        ret = np.where(p>0, self._labels[1], self._labels[0])
+        ret = np.where(p > 0, self._labels[1], self._labels[0])
 
         return ret
 
@@ -330,5 +337,5 @@ class ElasticNetC(ElasticNet):
     def labels(self):
         """Outputs the name of labels.
         """
-        
+
         return self._labels

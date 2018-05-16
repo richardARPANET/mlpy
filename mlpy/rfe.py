@@ -44,7 +44,7 @@ def rayleigh(x, kernel, lmb, alpha, idx1, idx2):
         R[i] = np.dot(np.dot(alpha, M), alpha.reshape(-1, 1)) / \
             np.dot(np.dot(alpha, N), alpha.reshape(-1, 1))
         idx[i] = True
-        
+
     return R
 
 
@@ -91,13 +91,13 @@ def rfe_kfda(x, y, p, lmb, kernel):
 
     if not isinstance(kernel, Kernel):
         raise ValueError("kernel must be None or a mlpy.Kernel object")
-    
+
     labels = np.unique(yarr)
     if labels.shape[0] != 2:
         raise ValueError("number of classes must be = 2")
-    
-    idx1 = np.where(yarr==labels[0])[0]
-    idx2 = np.where(yarr==labels[1])[0]
+
+    idx1 = np.where(yarr == labels[0])[0]
+    idx2 = np.where(yarr == labels[1])[0]
 
     kfda = KFDAC(lmb=lmb, kernel=kernel)
     idxglobal = np.arange(xarr.shape[1], dtype=np.int)
@@ -119,11 +119,11 @@ def rfe_kfda(x, y, p, lmb, kernel):
         # update idxglobal
         idxglobal = idxglobal[idxsorted[nelim:]]
         idxglobal.sort()
-        
+
         if len(idxglobal) <= 1:
             ranking.insert(0, idxglobal)
             break
-    
+
     return np.concatenate(ranking)
 
 
@@ -151,12 +151,13 @@ def rfe_w2(x, y, p, classifier):
           in i-th position.
     """
 
-    
     if (p < 0.0) or (p > 1.0):
         raise ValueError("parameter p must be in [0.0, 1.0]")
 
     if not (hasattr(classifier, 'learn') and hasattr(classifier, 'w')):
-        raise ValueError("parameter classifier must have learn() and w() methods")
+        raise ValueError(
+            "parameter classifier must have learn() and w() methods"
+        )
 
     xarr = np.asarray(x, dtype=np.float)
     yarr = np.asarray(y, dtype=np.int)
@@ -169,11 +170,11 @@ def rfe_w2(x, y, p, classifier):
 
     if xarr.shape[0] != yarr.shape[0]:
         raise ValueError("x, y shape mismatch")
-    
+
     labels = np.unique(yarr)
     if labels.shape[0] != 2:
         raise ValueError("number of classes must be = 2")
-    
+
     idxglobal = np.arange(xarr.shape[1], dtype=np.int)
     ranking = []
 
@@ -182,16 +183,16 @@ def rfe_w2(x, y, p, classifier):
         xi = xarr[:, idxglobal]
         classifier.learn(xi, yarr)
         w = classifier.w()
-        idxsorted = np.argsort(w**2)
+        idxsorted = np.argsort(w ** 2)
         # indexes to remove
         idxelim = idxglobal[idxsorted[:nelim]][::-1]
         ranking.insert(0, idxelim)
         # update idxglobal
         idxglobal = idxglobal[idxsorted[nelim:]]
         idxglobal.sort()
-        
+
         if len(idxglobal) <= 1:
             ranking.insert(0, idxglobal)
             break
-    
+
     return np.concatenate(ranking)

@@ -23,7 +23,7 @@ def next_p2(n):
     """Returns the smallest integer, greater than n
     (n positive and >= 1) which can be obtained as power of 2.
     """
-    
+
     if n < 1:
         raise ValueError("n must be >= 1")
 
@@ -54,24 +54,24 @@ def pad(x, method='reflection'):
 
     if not method in ['reflection', 'periodic', 'zeros']:
         raise ValueError('method %s not available' % method)
-    
+
     diff = next_p2(x_arr.shape[0]) - x_arr.shape[0]
     ldiff = int(diff / 2)
     rdiff = diff - ldiff
 
     if method == 'reflection':
         left_x = x_arr[:ldiff][::-1]
-        right_x = x_arr[-rdiff:][::-1]         
+        right_x = x_arr[-rdiff:][::-1]
     elif method == 'periodic':
         left_x = x_arr[:ldiff]
         right_x = x_arr[-rdiff:]
     elif method == 'zeros':
         left_x = np.zeros(ldiff, dtype=x_arr.dtype)
         right_x = np.zeros(rdiff, dtype=x_arr.dtype)
-        
+
     xp = np.concatenate((left_x, x_arr, right_x))
     orig = np.ones(x_arr.shape[0] + diff, dtype=np.bool)
     orig[:ldiff] = False
     orig[-rdiff:] = False
-   
+
     return xp, orig

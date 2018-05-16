@@ -51,17 +51,17 @@ def ridge_base(x, y, lmb):
     if n >= p:
         # primal solution
         # beta = (X'X + lambda I)^-1 X'Y
-        beta = np.linalg.solve(np.dot(x.T, x) + 
-            lmb * np.eye(x.shape[1]), np.dot(x.T, y))
+        beta = np.linalg.solve(
+            np.dot(x.T, x) + lmb * np.eye(x.shape[1]), np.dot(x.T, y)
+        )
     else:
-        # dual solution 
+        # dual solution
         # solve two linear equations systems:
         # (XX' + lambda I) alpha = y
         # beta = x^T alpha
-        alpha = np.linalg.solve(np.dot(x, x.T) + lmb *
-            np.eye(x.shape[0]), y)
+        alpha = np.linalg.solve(np.dot(x, x.T) + lmb * np.eye(x.shape[0]), y)
         beta = np.dot(x.T, alpha)
-        
+
         # # SVD method
         # # beta = V'(R'R + lambda I)R'Y
         # # where X = UDV and R = UD
@@ -70,7 +70,7 @@ def ridge_base(x, y, lmb):
         # tmp = np.linalg.inv(np.dot(r.T, r) + lmb *
         #     np.eye(r.shape[0]))
         # beta = np.dot(np.dot(np.dot(v.T, tmp), r.T), y)
-        
+
     return beta
 
 
@@ -93,7 +93,7 @@ class Ridge:
         """
 
         self._lmb = float(lmb)
-        
+
         if self._lmb < 0:
             raise ValueError("lmb must be >= 0")
 
@@ -122,12 +122,12 @@ class Ridge:
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y shape mismatch")
 
-        xmean =  np.mean(xarr, axis=0)
+        xmean = np.mean(xarr, axis=0)
         xarr = xarr - xmean
-                
+
         self._beta = ridge_base(xarr, yarr, self._lmb)
         self._beta0 = np.mean(y) - np.dot(xmean, self._beta)
-                
+
     def pred(self, t):
         """Compute the predicted response.
 
@@ -197,7 +197,7 @@ class KernelRidge:
         self._alpha = None
         self._b = None
         self._x = None
-                                
+
     def learn(self, K, y):
         """Compute the regression coefficients.
 
@@ -217,7 +217,7 @@ class KernelRidge:
 
         if y_arr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if K_arr.shape[0] != y_arr.shape[0]:
             raise ValueError("K, y shape mismatch")
 
@@ -230,20 +230,20 @@ class KernelRidge:
 
         n = K_arr.shape[0]
 
-        # dual solution 
+        # dual solution
         # (K + lambda I) alpha = y
-        
+
         # Solve |K+lambdaI 1| |alpha| = |y|
         #       |    1     0| |  b  |   |0|
         # as in G. C. Cawley, N. L. C. Nicola and O. Chapelle.
-        # Estimating Predictive Variances with Kernel Ridge 
+        # Estimating Predictive Variances with Kernel Ridge
         # Regression.
-        A = np.empty((n+1, n+1), dtype=np.float)
+        A = np.empty((n + 1, n + 1), dtype=np.float)
         A[:n, :n] = K_arr + self._lmb * np.eye(n)
         A[n, :n], A[:n, n], A[n, n] = 1., 1., 0.
         g = np.linalg.solve(A, np.append(y_arr, 0))
         self._alpha, self._b = g[:-1], g[-1]
-                
+
     def pred(self, Kt):
         """Compute the predicted response.
 
@@ -263,12 +263,12 @@ class KernelRidge:
         Kt_arr = np.asarray(Kt, dtype=np.float)
         if self._kernel is not None:
             Kt_arr = self._kernel.kernel(Kt_arr, self._x)
-        
+
         try:
             p = np.dot(self._alpha, Kt_arr.T) + self._b
         except ValueError:
             raise ValueError("Kt, alpha: shape mismatch")
-    
+
         return p
 
     def alpha(self):
@@ -276,7 +276,7 @@ class KernelRidge:
         """
 
         return self._alpha
-    
+
     def b(self):
         """Return b.
         """

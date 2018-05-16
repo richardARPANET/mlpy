@@ -58,20 +58,19 @@ def borda_count(x, k=None):
       * Id 1 is in the first position with 3 extractions and mean position 1.67.
       * ...
     """
-    
+
     x_arr = np.asarray(x, dtype=np.int)
     n, p = x_arr.shape
 
     if k == None:
         k = p
-        
+
     if k < 1 or k > p:
         raise ValueError('k must be in [1, %d]' % p)
 
     ext, pos = cborda.core(x_arr, k)
-        
-    invpos = (pos + 1)**(-1) # avoid zero division
-    idx = np.lexsort(keys=(invpos, ext))[::-1] 
-    
-    return idx, ext[idx], pos[idx]
 
+    invpos = (pos + 1) ** (-1)  # avoid zero division
+    idx = np.lexsort(keys=(invpos, ext))[::-1]
+
+    return idx, ext[idx], pos[idx]

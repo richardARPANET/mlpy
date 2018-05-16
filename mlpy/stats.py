@@ -34,26 +34,26 @@ def bootstrap_ci(x, B=1000, alpha=0.05, seed=0):
     For B = 1000 and alpha = 0.05 these are the 25th and 975th
     ordered means.
     """
-    
+
     x_arr = np.ravel(x)
 
     if B < 2:
         raise ValueError("B must be >= 2")
-    
+
     if alpha < 0 or alpha > 1:
         raise ValueError("alpha must be in [0, 1]")
 
     np.random.seed(seed)
-    
+
     bmean = np.empty(B, dtype=np.float)
     for b in range(B):
-        idx = np.random.random_integers(0, x_arr.shape[0]-1, x_arr.shape[0])
+        idx = np.random.random_integers(0, x_arr.shape[0] - 1, x_arr.shape[0])
         bmean[b] = np.mean(x_arr[idx])
-        
+
     bmean.sort()
     lower = int(B * (alpha * 0.5))
     upper = int(B * (1 - (alpha * 0.5)))
-    
+
     return (bmean[lower], bmean[upper])
 
 
@@ -68,5 +68,5 @@ def quantile(x, f):
     xarr = np.array(x, dtype=np.float, copy=True)
     xarr = np.ravel(x)
     xarr.sort()
-    
+
     return gsl.stats_quantile_from_sorted_data(xarr, f)

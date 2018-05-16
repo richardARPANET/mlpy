@@ -14,13 +14,12 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ['error', 'error_p', 'error_n', 'accuracy', 
-           'sensitivity', 'specificity', 'ppv', 'npv', 
-           'mcc', 'auc_wmw', 'mse', 'r2', 'r2_corr']
-
+__all__ = [
+    'error', 'error_p', 'error_n', 'accuracy', 'sensitivity', 'specificity',
+    'ppv', 'npv', 'mcc', 'auc_wmw', 'mse', 'r2', 'r2_corr'
+]
 
 import numpy as np
-
 """
 Compute metrics for assessing the performance of
 classification/regression models.
@@ -36,24 +35,28 @@ Predicted Negatives (pn) | False Negatives  (fn) | True Negatives   (tn)
 
 
 def is_binary(x):
-    
+
     ux = np.unique(x)
     for elem in ux:
         if elem not in [-1, 1]:
             return False
     return True
 
+
 def true_pos(t, p):
     w = (t == 1)
     return (t[w] == p[w]).sum()
+
 
 def true_neg(t, p):
     w = (t == -1)
     return (t[w] == p[w]).sum()
 
+
 def false_pos(t, p):
     w = (t == -1)
     return (t[w] != p[w]).sum()
+
 
 def false_neg(t, p):
     w = (t == 1)
@@ -73,13 +76,13 @@ def error(t, p):
     :Returns:
       error : float, in range [0.0, 1.0]
     """
-  
+
     tarr = np.asarray(t, dtype=np.int)
     parr = np.asarray(p, dtype=np.int)
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-        
+
     return (tarr != parr).sum() / float(tarr.shape[0])
 
 
@@ -96,13 +99,13 @@ def accuracy(t, p):
     :Returns:
       accuracy : float, in range [0.0, 1.0]
     """
-  
+
     tarr = np.asarray(t, dtype=np.int)
     parr = np.asarray(p, dtype=np.int)
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-        
+
     return (tarr == parr).sum() / float(tarr.shape[0])
 
 
@@ -129,14 +132,16 @@ def error_p(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
 
     fn = false_neg(tarr, parr)
     ap = float((true_pos(tarr, parr) + fn))
-    
+
     if ap == 0:
         return 0.0
 
@@ -166,14 +171,16 @@ def error_n(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
 
     fp = false_pos(tarr, parr)
     an = float((true_neg(tarr, parr) + fp))
-    
+
     if an == 0:
         return 0.0
 
@@ -203,14 +210,16 @@ def sensitivity(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
 
     tp = true_pos(tarr, parr)
     ap = float((tp + false_neg(tarr, parr)))
-    
+
     if ap == 0:
         return 0.0
 
@@ -240,11 +249,13 @@ def specificity(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
-    
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
+
     tn = true_neg(tarr, parr)
     an = float((false_pos(tarr, parr) + tn))
 
@@ -277,14 +288,16 @@ def ppv(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
 
     tp = true_pos(tarr, parr)
     pp = float((tp + false_pos(tarr, parr)))
-    
+
     if pp == 0:
         return 0.0
 
@@ -314,16 +327,18 @@ def npv(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
-       
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
+
     tn = true_neg(tarr, parr)
     pn = float((tn + false_neg(tarr, parr)))
-    
+
     if pn == 0:
-        return 0.0  
+        return 0.0
 
     return tn / pn
 
@@ -358,21 +373,23 @@ def mcc(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
 
     tp = true_pos(tarr, parr)
     tn = true_neg(tarr, parr)
-    fp = false_pos(tarr, parr)  
+    fp = false_pos(tarr, parr)
     fn = false_neg(tarr, parr)
 
-    den = np.sqrt((tp+fn)*(tp+fp)*(tn+fn)*(tn+fp))
+    den = np.sqrt((tp + fn) * (tp + fp) * (tn + fn) * (tn + fp))
     if den == 0.0:
         den = 1.0
 
-    num = np.float((tp*tn)-(fp*fn))
+    num = np.float((tp * tn) - (fp * fn))
     return num / den
 
 
@@ -396,20 +413,22 @@ def auc_wmw(t, p):
 
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
-    
+
     if not is_binary(tarr):
-        raise ValueError("only binary classification problems"
-            " with t[i] = -1/+1 are allowed.")
-    
-    idxp = np.where(tarr ==  1)[0]
+        raise ValueError(
+            "only binary classification problems"
+            " with t[i] = -1/+1 are allowed."
+        )
+
+    idxp = np.where(tarr == 1)[0]
     idxn = np.where(tarr == -1)[0]
-    
+
     auc = 0.0
     for i in idxp:
         for j in idxn:
             if (p[i] - p[j]) > 0.0:
                 auc += 1.0
-                
+
     return auc / float(idxp.shape[0] * idxn.shape[0])
 
 
@@ -434,7 +453,7 @@ def mse(t, p):
 
     n = tarr.shape[0]
 
-    return np.sum((tarr - parr)**2) / n
+    return np.sum((tarr - parr) ** 2) / n
 
 
 def r2(t, p):
@@ -459,8 +478,8 @@ def r2(t, p):
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
 
-    sserr = np.sum((tarr - parr)**2)
-    sstot = np.sum((tarr - tarr.mean())**2)
+    sserr = np.sum((tarr - parr) ** 2)
+    sstot = np.sum((tarr - tarr.mean()) ** 2)
 
     return 1. - (sserr / sstot)
 
@@ -486,4 +505,4 @@ def r2_corr(t, p):
     if tarr.shape[0] != parr.shape[0]:
         raise ValueError("t, p: shape mismatch")
 
-    return np.corrcoef(parr, tarr)[0,1]**2
+    return np.corrcoef(parr, tarr)[0, 1] ** 2

@@ -18,7 +18,6 @@
 
 __all__ = ['cv_kfold', 'cv_random', 'cv_all']
 
-
 import itertools
 import numpy as np
 
@@ -65,20 +64,19 @@ def cv_kfold(n, k, strat=None, seed=0):
     (array([ 6,  2,  1,  7,  3,  0, 11,  8, 10]), array([5, 4, 9]))
     """
 
-    
     if n < 2:
         raise ValueError("n must be > 1")
 
     if k < 2:
         raise ValueError("k must be > 1")
-    
+
     if strat is not None:
         _strat = np.asarray(strat, dtype=np.int)
         if n != _strat.shape[0]:
             raise ValueError("a, strat: shape mismatch")
     else:
         _strat = np.zeros(n, dtype=np.int)
-    
+
     labels = np.unique(_strat)
 
     # check k
@@ -98,10 +96,10 @@ def cv_kfold(n, k, strat=None, seed=0):
     for i in range(k):
         idx1, idx2 = [], []
         for j in range(len(splits)):
-            idx1.extend(splits[j][:i] + splits[j][i+1:])
+            idx1.extend(splits[j][:i] + splits[j][i + 1:])
             idx2.extend(splits[j][i])
         idx.append((np.concatenate(idx1), np.asarray(idx2)))
-            
+
     return idx
 
 
@@ -147,7 +145,7 @@ def cv_random(n, k, p, strat=None, seed=0):
 
     if k < 2:
         raise ValueError("k must be > 1")
-    
+
     if (p < 0) or (p > 100):
         raise ValueError("p must be in [0, 100]")
 
@@ -161,22 +159,22 @@ def cv_random(n, k, p, strat=None, seed=0):
     labels = np.unique(_strat)
 
     # check p
-    pmin = np.min([np.sum(l == _strat) for l in labels])**-1 * 100
+    pmin = np.min([np.sum(l == _strat) for l in labels]) ** -1 * 100
     if p < pmin:
         raise ValueError('p must be >= %.3f' % pmin)
-            
+
     np.random.seed(seed)
 
     idx = []
-    for _ in range(k):        
+    for _ in range(k):
         idx1, idx2 = [], []
         for l in labels:
             tmp = np.where(l == _strat)[0]
-            g = tmp.shape[0] - int(0.01*p*tmp.shape[0])
+            g = tmp.shape[0] - int(0.01 * p * tmp.shape[0])
             np.random.shuffle(tmp)
             idx1.append(tmp[:g])
             idx2.append(tmp[g:])
-        
+
         idx.append((np.concatenate(idx1), np.concatenate(idx2)))
 
     return idx
@@ -217,12 +215,12 @@ def cv_all(n, p):
 
     if (p < 0.0) or (p > 100.0):
         raise ValueError("p must be in [0, 100]")
-    
+
     # check p
-    pmin = n**-1 * 100
+    pmin = n ** -1 * 100
     if p < pmin:
         raise ValueError('p must be >= %.3f' % pmin)
-    
+
     k = int(0.01 * p * n)
     a = np.arange(n)
     tmp = np.asarray(list(itertools.combinations(a, k)))

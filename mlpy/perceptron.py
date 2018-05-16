@@ -18,6 +18,7 @@ import numpy as np
 
 __all__ = ["Perceptron"]
 
+
 class Perceptron:
     """Perceptron binary classifier.
     """
@@ -36,14 +37,13 @@ class Perceptron:
               maximum number of iterations
         """
 
-
-        self._alpha = alpha # learning rate, where 0.0 < alpha <= 1
+        self._alpha = alpha  # learning rate, where 0.0 < alpha <= 1
         self._maxiters = maxiters
-        self._thr = float(thr) # error threshold
+        self._thr = float(thr)  # error threshold
 
         self._labels = None
         self._w = None
-        self._bias = None # bias term
+        self._bias = None  # bias term
         self._err = None
         self._iters = None
 
@@ -59,41 +59,41 @@ class Perceptron:
 
         xarr = np.asarray(x, dtype=np.float)
         yarr = np.asarray(y, dtype=np.int)
-        
+
         if xarr.ndim != 2:
             raise ValueError("x must be a 2d array_like object")
-        
+
         if yarr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if xarr.shape[0] != yarr.shape[0]:
             raise ValueError("x, y: shape mismatch")
 
         self._labels = np.unique(yarr)
         k = self._labels.shape[0]
-        
+
         if k != 2:
             raise ValueError("number of classes must be = 2")
-        
+
         ynew = np.where(yarr == self._labels[0], 0, 1)
-        
+
         self._w = np.zeros(xarr.shape[1], dtype=np.float)
         self._bias = 0.0
         n = ynew.shape[0]
-        
+
         for i in range(self._maxiters):
-            tmp = np.where((np.dot(xarr, self._w)+self._bias)>0, 1, 0)
+            tmp = np.where((np.dot(xarr, self._w) + self._bias) > 0, 1, 0)
             err = np.sum(ynew != tmp) / float(n)
-            
+
             if err <= self._thr:
                 i = i - 1
                 break
-     
+
             diff = ynew - tmp
             self._w += self._alpha * np.dot(xarr.T, diff)
             self._bias += self._alpha * np.sum(diff)
-                 
-        tmp = np.where((np.dot(xarr, self._w)+self._bias)>0, 1, 0)
+
+        tmp = np.where((np.dot(xarr, self._w) + self._bias) > 0, 1, 0)
         err = np.sum(ynew != tmp) / float(n)
 
         self._err = err
@@ -113,7 +113,7 @@ class Perceptron:
         tarr = np.asarray(t, dtype=np.float)
         if tarr.ndim > 2:
             raise ValueError("t must be an 1d or a 2d array_like object")
-        
+
         try:
             tmp = np.dot(tarr, self._w) + self._bias
         except ValueError:
@@ -121,7 +121,7 @@ class Perceptron:
 
         return np.where(tmp>0, self._labels[1], self._labels[0]) \
             .astype(np.int)
-        
+
     def w(self):
         """Returns the coefficients.
         """
@@ -134,12 +134,12 @@ class Perceptron:
     def labels(self):
         """Outputs the name of labels.
         """
-        
+
         return self._labels
 
     def bias(self):
         """Returns the bias."""
-        
+
         if self._w is None:
             raise ValueError("no model computed.")
 
@@ -147,12 +147,10 @@ class Perceptron:
 
     def err(self):
         """Returns the iteration error"""
-        
+
         return self._err
-    
+
     def iters(self):
         """Returns the number of iterations"""
 
         return self._iters
-
-    

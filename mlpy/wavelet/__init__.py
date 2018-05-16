@@ -16,7 +16,6 @@ import uwt_align
 from padding import *
 import padding
 
-
 __all__ = []
 __all__ += continuous.__all__
 __all__ += uwt_align.__all__

@@ -71,7 +71,6 @@ import pls
 # visible submodules
 import wavelet
 
-
 __all__ = []
 __all__ += crossval.__all__
 __all__ += hcluster.__all__
@@ -97,13 +96,16 @@ __all__ += ['LibLinear']
 __all__ += ['LibSvm']
 __all__ += ['findpeaks_dist', 'findpeaks_win']
 __all__ += ['kmeans']
-__all__ += ['kernel_linear', 'kernel_gaussian',
-            'kernel_polynomial', 'kernel_exponential',
-            'kernel_sigmoid', 'kernel_center']
+__all__ += [
+    'kernel_linear', 'kernel_gaussian', 'kernel_polynomial',
+    'kernel_exponential', 'kernel_sigmoid', 'kernel_center'
+]
 __all__ += ['KernelAdatron']
-__all__ += ['canberra', 'canberra_location', 'canberra_stability',
-            'canberra_location_expected', 'canberra_location_max',
-            'canberra_stability_max']
+__all__ += [
+    'canberra', 'canberra_location', 'canberra_stability',
+    'canberra_location_expected', 'canberra_location_max',
+    'canberra_stability_max'
+]
 __all__ += ['KNN', 'ClassTree', 'MaximumLikelihoodC']
 __all__ += ['dtw_std', 'dtw_subsequence']
 __all__ += ['lcs_std', 'lcs_real']

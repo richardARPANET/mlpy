@@ -14,7 +14,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 __all__ = ["Parzen"]
 
 import numpy as np
@@ -40,7 +39,7 @@ class Parzen:
         self._labels = None
         self._kernel = kernel
         self._x = None
-                
+
     def learn(self, K, y):
         """Compute alpha and b.
 
@@ -60,7 +59,7 @@ class Parzen:
 
         if y_arr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if K_arr.shape[0] != y_arr.shape[0]:
             raise ValueError("K, y shape mismatch")
 
@@ -70,21 +69,21 @@ class Parzen:
         else:
             self._x = K_arr.copy()
             K_arr = self._kernel.kernel(K_arr, K_arr)
-        
+
         self._labels = np.unique(y_arr)
         if self._labels.shape[0] != 2:
             raise ValueError("number of classes != 2")
 
-        ynew = np.where(y_arr==self._labels[0], -1., 1.)
+        ynew = np.where(y_arr == self._labels[0], -1., 1.)
         n = K_arr.shape[0]
-        
+
         # from Kernel Methods for Pattern Analysis
         # Algorithm 5.6
-        
-        nplus = np.sum(ynew==1)
+
+        nplus = np.sum(ynew == 1)
         nminus = n - nplus
-        alphaplus = np.where(ynew==1, nplus**-1, 0)
-        alphaminus = np.where(ynew==-1, nminus**-1, 0)
+        alphaplus = np.where(ynew == 1, nplus ** -1, 0)
+        alphaminus = np.where(ynew == -1, nminus ** -1, 0)
         self._b = -0.5 * (np.dot(np.dot(alphaplus, K_arr), alphaplus) - \
                          np.dot(np.dot(alphaminus, K_arr), alphaminus))
         self._alpha = alphaplus - alphaminus
@@ -116,7 +115,7 @@ class Parzen:
 
         return np.where(s==-1, self._labels[0], self._labels[1]) \
             .astype(np.int)
-          
+
     def alpha(self):
         """Return alpha.
         """
@@ -126,10 +125,9 @@ class Parzen:
         """Return b.
         """
         return self._b
-    
+
     def labels(self):
         """Outputs the name of labels.
         """
-        
+
         return self._labels
-                        
