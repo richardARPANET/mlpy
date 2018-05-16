@@ -1,3 +1,9 @@
+Version 3.5.1
+-------------
+
+ * Fixes imports which error
+ * Fixes packaging
+
 Version 3.5.0
 -------------
 New features:
