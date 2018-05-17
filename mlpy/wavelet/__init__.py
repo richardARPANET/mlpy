@@ -5,12 +5,12 @@ import sys
 from ._dwt import *
 from ._uwt import *
 
-from continuous import *
-import continuous
-from uwt_align import *
-import uwt_align
-from padding import *
-import padding
+from .continuous import *
+from .import continuous
+from .uwt_align import *
+from . import uwt_align
+from .padding import *
+from . import padding
 
 __all__ = []
 __all__ += continuous.__all__

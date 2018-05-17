@@ -18,8 +18,8 @@ __all__ = ['rfe_kfda', 'rfe_w2']
 
 import numpy as np
 
-from da import KFDAC
-from kernel_class import *
+from .da import KFDAC
+from .kernel_class import *
 
 
 # used in rfe_kfda
@@ -53,9 +53,9 @@ def rfe_kfda(x, y, p, lmb, kernel):
     """KFDA-RFE algorithm based on the Rayleigh coefficient
     proposed in [Louw06]_. The algorithm works with only two
     classes.
-    
+
     .. [Louw06] N Louw and S J Steel. Variable selection in kernel Fisher discriminant analysis by means of recursive feature elimination. Journal Computational Statistics & Data Analysis, 2006.
-    
+
     :Parameters:
        x: 2d array_like object (N,P)
           training data
@@ -130,11 +130,11 @@ def rfe_kfda(x, y, p, lmb, kernel):
 
 def rfe_w2(x, y, p, classifier):
     """RFE algorithm, where the ranking criteria is w^2,
-    described in [Guyon02]_. `classifier` must be an linear classifier 
+    described in [Guyon02]_. `classifier` must be an linear classifier
     with learn() and w() methods.
-        
+
     .. [Guyon02] I Guyon, J Weston, S Barnhill and V Vapnik. Gene Selection for Cancer Classification using Support Vector Machines. Machine Learning, 2002.
-    
+
     :Parameters:
        x: 2d array_like object (N,P)
           training data

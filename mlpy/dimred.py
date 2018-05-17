@@ -19,9 +19,9 @@ import sys
 import numpy as np
 import scipy.linalg as spla
 
-from kernel_class import *
-from ols import ols_base
-from ridge import ridge_base
+from .kernel_class import *
+from .ols import ols_base
+from .ridge import ridge_base
 
 from . import kernel
 
