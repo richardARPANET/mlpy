@@ -18,6 +18,8 @@
 
 from numpy import *
 
+from .. import gsl
+
 __all__ = [
     "cwt", "icwt", "autoscales", "fourier_from_scales", "scales_from_fourier"
 ]
@@ -63,11 +65,7 @@ def paulft(s, w, order, dt):
     Output
       * (normalized) fourier transformed paul function
     """
-    # import is here as in some versions of Python
-    # importing gsl results in :
-    # terminated by signal SIGSEGV (Address boundary error)
-    # upon exit of the interpreter
-    from .. import gsl
+
     p = 2.0 ** order / sqrt(order * gsl.sf_fact((2 * order) - 1))
     wavelet = zeros((s.shape[0], w.shape[0]))
     pos = w > 0
@@ -91,11 +89,7 @@ def dogft(s, w, order, dt):
     Output
       * (normalized) fourier transformed DOG function
     """
-    # import is here as in some versions of Python
-    # importing gsl results in :
-    # terminated by signal SIGSEGV (Address boundary error)
-    # upon exit of the interpreter
-    from .. import gsl
+
     p = -(0.0 + 1.0j) ** order / sqrt(gsl.sf_gamma(order + 0.5))
     wavelet = zeros((s.shape[0], w.shape[0]), dtype=complex128)
 
