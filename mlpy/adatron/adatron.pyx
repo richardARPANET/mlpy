@@ -19,23 +19,27 @@ import numpy as np
 cimport numpy as np
 
 cdef extern from "c_adatron.h":
-    int adatron(long *y, double *K, int n, double C, int maxsteps, 
+    int adatron(long *y, double *K, int n, double C, int maxsteps,
                 double eps,double *alpha, double *margin)
-    
-np.import_array()
-    
+
+try:
+    np.import_array()
+except AttributeError:
+    # not all numpy versions have import_array
+    pass
+
 
 class KernelAdatron:
     """Kernel Adatron algorithm without-bias-term (binary classifier).
-    
+
     The algoritm handles a version of the 1-norm soft margin
-    support vector machine. If C is very high the algoritm 
+    support vector machine. If C is very high the algoritm
     handles a version of the hard margin SVM.
 
     Use positive definite kernels (such as Gaussian
     and Polynomial kernels)
     """
-    
+
     def __init__(self, C=1000, maxsteps=1000, eps=0.01):
         """Initialization.
 
@@ -66,7 +70,7 @@ class KernelAdatron:
            y : 1d array_like object (N)
               target values
         """
-        
+
         cdef np.ndarray[np.int_t, ndim=1] ynew
         cdef np.ndarray[np.float_t, ndim=2] K_arr
         cdef np.ndarray[np.float_t, ndim=1] alpha_arr
@@ -80,13 +84,13 @@ class KernelAdatron:
 
         if y_arr.ndim != 1:
             raise ValueError("y must be an 1d array_like object")
-        
+
         if K_arr.shape[0] != K_arr.shape[1]:
             raise ValueError("K must be a square matrix")
 
         if K_arr.shape[0] != y_arr.shape[0]:
             raise ValueError("K, y shape mismatch")
-        
+
         self._labels = np.unique(y_arr)
         if self._labels.shape[0] != 2:
             raise ValueError("number of classes != 2")
@@ -109,8 +113,8 @@ class KernelAdatron:
 
         :Parameters:
            Kt : 1d or 2d array_like object ([M], N)
-              test kernel matrix. Precomputed inner products 
-              (in feature space) between M testing and N 
+              test kernel matrix. Precomputed inner products
+              (in feature space) between M testing and N
               training points.
 
         :Returns:
@@ -127,7 +131,7 @@ class KernelAdatron:
             s = np.sign(np.dot(self._alpha * self._y, Kt_arr.T))
         except ValueError:
             raise ValueError("Kt, alpha: shape mismatch")
-        
+
         return np.where(s==-1, self._labels[0], self._labels[1]) \
             .astype(np.int)
 
@@ -136,15 +140,15 @@ class KernelAdatron:
         """
 
         return self._margin
-    
+
     def steps(self):
         """Return the number of steps performed.
         """
 
         return self._steps
-    
+
     def alpha(self):
         """Return alpha
         """
-        
+
         return self._alpha
